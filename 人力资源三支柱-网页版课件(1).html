@@ -1,0 +1,1720 @@
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人力资源三支柱 · 剧场版课件</title>
+<link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&amp;family=Noto+Serif+SC:wght@600;900&amp;family=Noto+Sans+SC:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   主题变量：漫画剧场（改这里=改全片风格）
+   =========================================== */
+:root {
+    --paper: #f7f1e3;
+    --card: #fffdf6;
+    --ink: #23201a;
+    --muted: #6f6650;
+    --verm: #b3532f;
+    --blue: #2f6db3;
+    --green: #4a6741;
+    --orange: #db7c2c;
+    --gold: #c8a24a;
+    --stage-bg: #e8e0cf;
+    --slide-bg: var(--paper);
+    --font-display: 'Noto Serif SC', serif;
+    --font-body: 'Noto Sans SC', sans-serif;
+    --font-speech: 'Zhi Mang Xing', cursive;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.6s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES (viewport-base.css 全文)
+   =========================================== */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   漫画剧场 · 通用视觉系统
+   =========================================== */
+.slide { font-family: var(--font-body); color: var(--ink); }
+.slide::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(30,30,30,.09) 1.5px, transparent 1.5px);
+    background-size: 26px 26px;
+}
+.slide.dark { background: var(--ink); color: #f2ead8; }
+.slide.dark::before { background-image: radial-gradient(rgba(242,234,216,.10) 1.5px, transparent 1.5px); }
+
+.speedlines { position: absolute; pointer-events: none; z-index: 0;
+    background: repeating-conic-gradient(from 0deg at 100% 0%, transparent 0deg 5deg, rgba(30,30,30,.07) 5deg 7deg); }
+.slide.dark .speedlines { background: repeating-conic-gradient(from 0deg at 100% 0%, transparent 0deg 5deg, rgba(242,234,216,.06) 5deg 7deg); }
+
+.wrap { position: absolute; inset: 0; padding: 70px 96px 60px; display: flex; flex-direction: column; z-index: 2; }
+.wrap.center { align-items: center; justify-content: center; text-align: center; }
+
+.masthead { display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 4px double currentColor; padding-bottom: 12px; margin-bottom: 26px; opacity: .92; }
+.masthead .brand { font-family: var(--font-display); font-weight: 900; font-size: 24px; letter-spacing: .12em; }
+.masthead .issue { font-size: 19px; letter-spacing: .2em; color: var(--muted); }
+.slide.dark .masthead .issue { color: #b7ab90; }
+
+.act { display: inline-block; width: fit-content; font-size: 21px; font-weight: 700; letter-spacing: .26em;
+    color: var(--verm); border: 2.5px solid var(--verm); padding: 7px 18px; margin-bottom: 18px; }
+.slide.dark .act { color: #e8b07e; border-color: #e8b07e; }
+h2.title { font-family: var(--font-display); font-weight: 900; font-size: 60px; line-height: 1.2; margin-bottom: 12px; }
+.lead { font-size: 28px; color: var(--muted); line-height: 1.6; }
+.slide.dark .lead { color: #c9bd9f; }
+
+.panel { background: var(--card); border: 3.5px solid var(--ink); box-shadow: 7px 7px 0 rgba(30,30,30,.16);
+    padding: 24px 28px; position: relative; }
+.slide.dark .panel { background: #2e2a22; border-color: #f2ead8; box-shadow: 7px 7px 0 rgba(0,0,0,.45); }
+.panel h3 { font-family: var(--font-display); font-weight: 900; font-size: 30px; margin-bottom: 8px; }
+.panel p, .panel li { font-size: 24px; line-height: 1.6; }
+.panel ul { padding-left: 1.2em; }
+
+.bubble { background: #fff; border: 3.5px solid var(--ink); border-radius: 34px; padding: 20px 34px;
+    font-family: var(--font-speech); font-size: 42px; line-height: 1.25; position: relative; color: var(--ink);
+    box-shadow: 6px 6px 0 rgba(30,30,30,.16); width: fit-content; max-width: 100%; }
+.bubble .who { display: block; font-family: var(--font-body); font-size: 19px; font-weight: 700;
+    letter-spacing: .1em; color: var(--verm); margin-bottom: 2px; }
+.bubble.tail-r::after { content: ''; position: absolute; right: -30px; top: 40px; border: 15px solid transparent; border-left: 24px solid var(--ink); }
+.bubble.tail-r::before { content: ''; position: absolute; right: -23px; top: 43px; border: 12px solid transparent; border-left: 19px solid #fff; z-index: 1; }
+.bubble.tail-l::after { content: ''; position: absolute; left: -30px; top: 40px; border: 15px solid transparent; border-right: 24px solid var(--ink); }
+.bubble.tail-l::before { content: ''; position: absolute; left: -23px; top: 43px; border: 12px solid transparent; border-right: 19px solid #fff; z-index: 1; }
+.bubble.tail-b::after { content: ''; position: absolute; left: 70px; bottom: -30px; border: 15px solid transparent; border-top: 24px solid var(--ink); }
+.bubble.tail-b::before { content: ''; position: absolute; left: 73px; bottom: -23px; border: 12px solid transparent; border-top: 19px solid #fff; z-index: 1; }
+
+.face { flex-shrink: 0; }
+.face svg { width: 100%; height: 100%; display: block; }
+
+.cast-row { display: flex; align-items: center; gap: 26px; }
+.cast-row .face { width: 120px; height: 120px; }
+
+mark { background: rgba(219,124,44,.35); color: inherit; padding: 0 8px; }
+.key-line { font-family: var(--font-display); font-weight: 900; }
+
+.stamp { display: inline-block; font-family: var(--font-display); font-weight: 900; color: var(--verm);
+    border: 4px solid var(--verm); border-radius: 8px; padding: 8px 22px; font-size: 30px;
+    transform: rotate(-4deg); letter-spacing: .14em; width: fit-content; }
+
+/* ===========================================
+   互动组件：点击揭示 / 选项反馈 / 投票
+   =========================================== */
+.hint { font-size: 20px; color: var(--verm); font-weight: 700; letter-spacing: .1em; }
+.hint::before { content: '👆 '; }
+.clickable { cursor: pointer; }
+.clickable .cover-label { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; color: var(--verm); font-size: 21px; }
+.answer { max-height: 0; opacity: 0; overflow: hidden; transition: max-height .6s var(--ease-out-expo), opacity .5s, margin .5s; margin-top: 0; }
+.revealed .answer { max-height: 800px; opacity: 1; margin-top: 14px; }
+.revealed .cover-label { display: none; }
+.answer .ans-tag { display: inline-block; background: var(--verm); color: #fff; font-size: 19px; font-weight: 700;
+    padding: 3px 14px; border-radius: 999px; margin-bottom: 8px; letter-spacing: .1em; }
+
+.opt { cursor: pointer; transition: transform .2s, background .3s, color .3s; }
+.opt:hover { transform: translateY(-4px); }
+.opt.correct { background: var(--green) !important; color: #fff !important; }
+.opt.correct * { color: #fff !important; }
+.opt.wrong { background: #c44b3a !important; color: #fff !important; animation: shake .4s; }
+.opt.locked { pointer-events: none; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+.feedback { max-height: 0; opacity: 0; overflow: hidden; transition: all .5s var(--ease-out-expo); }
+.feedback.show { max-height: 400px; opacity: 1; margin-top: 14px; }
+
+/* ===========================================
+   入场动画（.visible 触发 .reveal）
+   =========================================== */
+.reveal { opacity: 0; transform: translateY(30px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo); }
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.reveal-pop { opacity: 0; transform: scale(.6);
+    transition: opacity .5s var(--ease-out-expo), transform .55s cubic-bezier(.34,1.56,.64,1); }
+.slide.visible .reveal-pop { opacity: 1; transform: scale(1); }
+.reveal-left { opacity: 0; transform: translateX(-56px);
+    transition: opacity .6s var(--ease-out-expo), transform .6s var(--ease-out-expo); }
+.slide.visible .reveal-left { opacity: 1; transform: translateX(0); }
+.d1 { transition-delay: .12s; } .d2 { transition-delay: .24s; } .d3 { transition-delay: .36s; }
+.d4 { transition-delay: .48s; } .d5 { transition-delay: .60s; } .d6 { transition-delay: .72s; }
+.d7 { transition-delay: .84s; } .d8 { transition-delay: .96s; }
+
+/* ===========================================
+   页码 / 编辑模式控件
+   =========================================== */
+.pager { position: fixed; right: 18px; bottom: 14px; z-index: 1000; font-family: var(--font-body);
+    font-size: 13px; color: #6f6650; background: rgba(247,241,227,.85); border: 1.5px solid #b9ac8d;
+    padding: 4px 14px; border-radius: 999px; letter-spacing: .08em; }
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 14px; left: 14px; width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(35,32,26,.92); border: 2px solid var(--gold); color: var(--gold); font-size: 20px;
+    cursor: pointer; z-index: 10001; opacity: 0; pointer-events: none; transition: opacity .3s ease;
+    display: flex; align-items: center; justify-content: center; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--gold); color: #23201a; }
+.edit-save { position: fixed; top: 14px; left: 66px; width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(200,162,74,.95); border: 2px solid var(--gold); color: #23201a; font-size: 20px;
+    cursor: pointer; z-index: 10001; opacity: 0; pointer-events: none; transition: opacity .3s ease;
+    display: flex; align-items: center; justify-content: center; }
+.edit-save.show { opacity: 1; pointer-events: auto; }
+.inline-toolbar { position: fixed; top: 14px; left: 120px; display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; background: rgba(35,32,26,.95); border: 2px solid var(--gold); border-radius: 8px;
+    color: #f2ead8; font-family: var(--font-body); font-size: 14px; z-index: 10002;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.inline-toolbar.show { opacity: 1; pointer-events: auto; }
+.inline-toolbar input[type="number"] { width: 58px; background: rgba(255,255,255,.1); border: 1px solid #8a7c5a;
+    color: #f2ead8; border-radius: 4px; padding: 4px 6px; }
+.inline-toolbar input[type="color"] { width: 28px; height: 28px; padding: 0; border: 1px solid #8a7c5a;
+    border-radius: 4px; background: transparent; cursor: pointer; }
+.inline-toolbar button { background: rgba(255,255,255,.08); color: #f2ead8; border: 1px solid #8a7c5a;
+    border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 13px; }
+.inline-toolbar button.active { background: var(--gold); color: #23201a; }
+.inline-selected { outline: 2px solid #fff !important; outline-offset: 2px; }
+body.editing .slide [contenteditable="true"] { outline: 1.5px dashed var(--gold); outline-offset: 2px; }
+body.editing .clickable, body.editing .opt { cursor: text; }
+
+/* ===========================================
+   各页专用布局
+   =========================================== */
+.cover-grid { position: absolute; inset: 0; display: grid; grid-template-columns: 1050px 1fr; z-index: 2; }
+.cover-left { padding: 0 0 0 84px; display: flex; flex-direction: column; justify-content: center; }
+.cover-right { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-content: center; padding: 130px 60px 60px 20px; }
+.cover-panel { background: var(--card); border: 3.5px solid var(--ink); padding: 22px 14px 16px; text-align: center;
+    box-shadow: 7px 7px 0 rgba(30,30,30,.16); }
+.cover-panel .face { width: 108px; height: 108px; margin: 0 auto 10px; }
+.cover-panel .pname { font-family: var(--font-display); font-weight: 900; font-size: 28px; }
+.cover-panel .prole { font-size: 18px; color: var(--muted); margin-top: 2px; }
+.cover-panel .pline { font-family: var(--font-speech); font-size: 28px; color: var(--verm); margin-top: 6px; }
+
+.org-chart { display: flex; flex-direction: column; align-items: center; }
+.org-node { background: var(--card); border: 3.5px solid var(--ink); box-shadow: 5px 5px 0 rgba(30,30,30,.16);
+    padding: 12px 34px; font-family: var(--font-display); font-weight: 900; font-size: 28px; }
+.org-arrow { font-size: 28px; color: var(--verm); line-height: 1.15; }
+.org-depts { display: flex; gap: 18px; margin-top: 4px; }
+.org-dept { background: #fff; border: 3px solid var(--ink); padding: 14px 18px; font-size: 23px; font-weight: 700;
+    text-align: center; box-shadow: 4px 4px 0 rgba(30,30,30,.14); }
+.org-dept.hr { background: rgba(219,124,44,.22); border-color: var(--verm); color: var(--verm); }
+
+.mod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.mod-grid .panel { text-align: center; padding: 30px 22px; }
+.mod-num { font-family: var(--font-speech); font-size: 50px; color: var(--verm); line-height: 1; }
+.mod-name { font-family: var(--font-display); font-weight: 900; font-size: 31px; margin-top: 8px; }
+
+.chain { display: flex; align-items: stretch; }
+.chain .link { flex: 1; background: var(--card); border: 3.5px solid var(--ink); padding: 20px 20px;
+    box-shadow: 5px 5px 0 rgba(30,30,30,.16); position: relative; font-size: 24px; line-height: 1.5; }
+.chain .link + .link { margin-left: 44px; }
+.chain .link + .link::before { content: '→'; position: absolute; left: -40px; top: 50%; transform: translateY(-50%);
+    font-size: 34px; font-weight: 900; color: var(--verm); }
+.chain .link b { font-family: var(--font-display); font-size: 26px; }
+.chain.vertical { flex-direction: column; }
+.chain.vertical .link + .link { margin-left: 0; margin-top: 34px; }
+.chain.vertical .link + .link::before { content: '↓'; left: 50%; top: -32px; transform: translateX(-50%); }
+
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; flex: 1; min-height: 0; }
+.vs .panel { display: flex; flex-direction: column; }
+.vs-badge { position: absolute; top: -22px; left: 26px; font-family: var(--font-display); font-weight: 900;
+    font-size: 24px; padding: 4px 18px; border: 3px solid var(--ink); background: var(--gold); }
+
+.quote-big { font-family: var(--font-display); font-weight: 900; font-size: 72px; line-height: 1.5; }
+.quote-mark { font-family: var(--font-speech); font-size: 130px; color: var(--verm); line-height: .6; }
+
+.vote-row { display: flex; gap: 48px; justify-content: center; }
+.vote-btn { width: 560px; padding: 38px 36px; background: var(--card); border: 4px solid var(--ink);
+    box-shadow: 8px 8px 0 rgba(30,30,30,.18); text-align: center; cursor: pointer; transition: transform .2s; }
+.vote-btn:hover { transform: translateY(-6px); }
+.vote-btn .v-tag { font-family: var(--font-speech); font-size: 74px; line-height: 1; }
+.vote-btn .v-text { font-family: var(--font-display); font-weight: 900; font-size: 38px; margin-top: 8px; }
+.vote-btn.picked { outline: 6px solid var(--verm); }
+
+.hero-char { display: flex; gap: 56px; align-items: center; flex: 1; min-height: 0; }
+.hero-char .face { width: 360px; height: 360px; }
+.hero-char .h-name { font-family: var(--font-display); font-weight: 900; font-size: 84px; }
+.hero-char .h-en { font-size: 24px; letter-spacing: .14em; color: var(--muted); margin: 4px 0 16px; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 14px; }
+.tag { border: 3px solid var(--ink); background: var(--card); padding: 8px 20px; font-size: 24px; font-weight: 700;
+    color: var(--ink); box-shadow: 4px 4px 0 rgba(30,30,30,.15); }
+
+.tri-wrap { display: flex; align-items: center; justify-content: center; flex: 1; min-height: 0; }
+.tri { position: relative; width: 900px; height: 620px; }
+.tri-node { position: absolute; width: 250px; text-align: center; background: var(--card); border: 4px solid var(--ink);
+    box-shadow: 7px 7px 0 rgba(30,30,30,.18); padding: 20px 12px; }
+.tri-node .t-name { font-family: var(--font-display); font-weight: 900; font-size: 34px; }
+.tri-node .t-en { font-size: 18px; color: var(--muted); letter-spacing: .1em; }
+.tri-center { position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%); text-align: center;
+    font-family: var(--font-display); font-weight: 900; font-size: 28px; color: var(--verm); width: 260px; }
+.tri-line { position: absolute; background: var(--ink); height: 3.5px; transform-origin: left center; opacity: .55; }
+
+.quiz-q { font-size: 28px; line-height: 1.6; font-weight: 700; }
+.quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+.quiz-opts .panel { padding: 14px 20px; font-size: 22px; box-shadow: 4px 4px 0 rgba(30,30,30,.14); }
+.diff { float: right; font-size: 17px; color: #fff; background: var(--muted); padding: 2px 12px; border-radius: 999px; font-weight: 700; }
+</style>
+</head>
+<body class="">
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage" style="transform: translate(0px, 22.21875px) scale(0.617188);">
+
+<!-- ================= S1 封面 ================= -->
+<section class="slide">
+    <div class="speedlines" style="right:-140px;top:-140px;width:760px;height:760px;"></div>
+    <div style="position:absolute;top:0;left:0;right:0;padding:28px 56px 12px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:5px double var(--ink);z-index:3;">
+        <span style="font-family:var(--font-display);font-weight:900;font-size:30px;letter-spacing:.1em;">X 新能源汽车有限公司 · 人事风云</span>
+        <span style="font-size:20px;color:var(--muted);letter-spacing:.2em;">第壹话 · 人力资源三支柱</span>
+    </div>
+    <div class="cover-grid">
+        <div class="cover-left">
+            <span class="act reveal">剧场版 · HR 变革三部曲</span>
+            <h1 class="reveal d1" style="font-family:var(--font-display);font-weight:900;font-size:132px;line-height:1.14;">人力资源<br><span style="position:relative;">三支柱<i style="position:absolute;left:0;right:0;bottom:12px;height:20px;background:rgba(219,124,44,.4);z-index:-1;"></i></span>登场</h1>
+            <p class="lead reveal d2" style="margin-top:20px;">当「要人」的销售总监，遇上「不只是招人」的新 HR</p>
+            <div class="bubble tail-r reveal-pop d3" style="margin-top:40px;">
+                <span class="who">雷总 · 销售总监</span>
+                “下个月进华南市场，给我招 20 个人！”
+            </div>
+        </div>
+        <div class="cover-right">
+            <div class="cover-panel reveal-pop d2" style="transform:rotate(-1.4deg);"><div class="face" data-avatar="lei"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M30 52q-4-26 30-26t30 26l-6-2q-2-16-24-16t-24 16z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#b3532f" stroke="#23201a" stroke-width="3.5"></path><path d="M46 84h28l-14 12z" fill="#fff" stroke="#23201a" stroke-width="2.5"></path><path d="M48 50h10M62 50h10" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"></path><path d="M52 66q8 6 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 40l14 4M80 40l-14 4" stroke="#23201a" stroke-width="3" stroke-linecap="round"></path></svg></div><div class="pname">雷总</div><div class="prole">销售总监</div><div class="pline">“我要人！”</div></div>
+            <div class="cover-panel reveal-pop d3" style="transform:rotate(1.2deg);"><div class="face" data-avatar="bo"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div><div class="pname">柏桥</div><div class="prole">HRBP · 业务伙伴</div><div class="pline">“先聊聊业务”</div></div>
+            <div class="cover-panel reveal-pop d4" style="transform:rotate(.9deg);"><div class="face" data-avatar="gu"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"></path><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"></path><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div><div class="pname">顾深远</div><div class="prole">COE · 专家中心</div><div class="pline">“方案交给我”</div></div>
+            <div class="cover-panel reveal-pop d5" style="transform:rotate(-1deg);"><div class="face" data-avatar="shi"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"></path><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"></path><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div><div class="pname">时小捷</div><div class="prole">SSC · 共享服务</div><div class="pline">“马上办好！”</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S2 引子 ================= -->
+<section class="slide">
+    <div class="wrap center" style="font-size: 37px;">
+        <span class="act reveal">三支柱<br></span>
+        <h2 class="quote-big reveal d1"><span style="caret-color: rgb(111, 102, 80); color: rgb(111, 102, 80); font-family: &quot;Noto Sans SC&quot;, sans-serif; font-size: 28px; font-weight: 400;">HRBP、COE、SSC</span></h2>
+        <p class="lead reveal d2" style="margin-top:34px;max-width:1250px;"><mark>一家企业</mark>、<mark>一个麻烦</mark>，和 <mark>三个人</mark>。</p>
+        <div class="hint reveal d3" style="margin-top:44px;">用 ← → 翻页，跟随剧情推进</div>
+    </div>
+</section>
+
+<!-- ================= S3 X公司登场 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 设定</span><span class="issue">课堂导入</span></div>
+        <span class="act reveal">本剧舞台</span>
+        <h2 class="title reveal d1">X 新能源汽车有限公司</h2>
+        <p class="lead reveal d2">一家正在快速发展的新能源车企。业务蒸蒸日上，部门齐全——当然，也包括人力资源部。</p>
+        <div class="chain reveal d3" style="margin-top:56px;">
+            <div class="link"><b>发展势头</b><br>市场扩张中，准备进军新区域</div>
+            <div class="link"><b>组织形态</b><br>最典型的职能型组织结构</div>
+            <div class="link"><b>风暴中心</b><br>销售部 与 人力资源部</div>
+        </div>
+        <div class="bubble tail-b reveal-pop d4" style="margin-top:56px;">
+            <span class="who">e旁白</span>
+            这样的公司，你身边一抓一大把。问题，也正藏在这里。
+        </div>
+    </div>
+</section>
+
+<!-- ================= S4 传统组织架构 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 设定</span><span class="issue">课堂导入</span></div>
+        <span class="act reveal">看一眼就熟悉</span>
+        <h2 class="title reveal d1">传统职能型组织架构</h2>
+        <div class="org-chart reveal d2" style="margin-top:20px;">
+            <div class="org-node">股东大会</div>
+            <div class="org-arrow">↓</div>
+            <div class="org-node">董事会</div>
+            <div class="org-arrow">↓</div>
+            <div class="org-node">总经理 / CEO</div>
+            <div class="org-arrow">↓</div>
+            <div class="org-depts">
+                <div class="org-dept reveal d3">e基建工程部</div>
+                <div class="org-dept reveal d3">生产计划部</div>
+                <div class="org-dept reveal d4">项目管理部</div>
+                <div class="org-dept reveal d4">销售部</div>
+                <div class="org-dept reveal d5">财务部</div>
+                <div class="org-dept hr reveal d5">人力资源部</div>
+            </div>
+        </div>
+        <p class="lead reveal d6" style="margin-top:30px;text-align:center;">按职能划分部门：建设的、生产的、销售的、财务的……<br>那么，<mark class="">人力资源部到底干什么？</mark></p>
+    </div>
+</section>
+
+<!-- ================= S5 互动① ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 互动</span><span class="issue">课堂提问 ①</span></div>
+        <div class="cast-row reveal">
+            <div class="face" data-avatar="teacher"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#3d3d3d"></path><path d="M18 112q6-26 42-26t42 26z" fill="#c8a24a" stroke="#23201a" stroke-width="3.5"></path><path d="M42 52q5 -5 10 0M68 52q5 -5 10 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M50 66q10 7 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><rect x="86" y="20" width="22" height="16" rx="3" fill="#fff" stroke="#23201a" stroke-width="2.5"></rect><path d="M90 26h14M90 30h9" stroke="#23201a" stroke-width="2"></path></svg></div>
+            <div class="bubble tail-l"><span class="who">提问：</span>在这家企业里，人力资源部门主要负责什么？</div>
+        </div>
+        <div class="panel clickable reveal d2" data-reveal="" style="margin-top:52px;">
+            <span class="cover-label">请大家自由回答，再点击看「常见回答」</span>
+            <div class="answer">
+                <span class="ans-tag">常见回答</span>
+                <div class="tag-row">
+                    <span class="tag">招人</span><span class="tag">发工资</span><span class="tag">培训</span>
+                    <span class="tag">绩效考核</span><span class="tag">办离职</span><span class="tag">签劳动合同</span>
+                </div>
+                <p style="margin-top:14px;" class="">以上是传统人力资源管理的<mark>大部分工作</mark>。下面把它专业化总结。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S6 知识点1 六大模块 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 知识点</span><span class="issue">知识点 ①</span></div>
+        <span class="act reveal">知识点 ①</span>
+        <h2 class="title reveal d1">传统人力资源管理 · 六大模块</h2>
+        <div class="mod-grid" style="margin-top:26px;">
+            <div class="panel reveal d2"><div class="mod-num">壹</div><div class="mod-name">人力资源规划</div></div>
+            <div class="panel reveal d3"><div class="mod-num">贰</div><div class="mod-name">招聘与配置</div></div>
+            <div class="panel reveal d4"><div class="mod-num">叁</div><div class="mod-name">培训与开发</div></div>
+            <div class="panel reveal d5"><div class="mod-num">肆</div><div class="mod-name">绩效管理</div></div>
+            <div class="panel reveal d6"><div class="mod-num">伍</div><div class="mod-name">薪酬福利管理</div></div>
+            <div class="panel reveal d7"><div class="mod-num">陆</div><div class="mod-name">劳动关系管理</div></div>
+        </div>
+        <p class="lead reveal d8" style="margin-top:30px;">传统 HR 部并不简单——它承担了大量工作。但问题是：<mark>这么多事，谁来干？</mark></p>
+    </div>
+</section>
+
+<!-- ================= S7 传统HR部门内部 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第贰幕</span><span class="issue">传统 HR 的组织方式</span></div>
+        <span class="act reveal">第贰幕 · 传统 HR</span>
+        <h2 class="title reveal d1">传统 HR 部门内部：按职能分组</h2>
+        <div class="org-chart reveal d2" style="margin-top:26px;">
+            <div class="org-node">人力资源部经理</div>
+            <div class="org-arrow">↓</div>
+            <div class="org-depts">
+                <div class="org-dept reveal d3">招聘组</div>
+                <div class="org-dept reveal d3">培训组</div>
+                <div class="org-dept reveal d4">薪酬绩效组</div>
+                <div class="org-dept reveal d4">员工关系组</div>
+                <div class="org-dept reveal d5">人事行政组</div>
+            </div>
+        </div>
+        <div class="bubble tail-b reveal-pop d6" style="margin-top:48px;">
+            <span class="who">部门逻辑</span>
+            你负责你的模块，我负责我的模块——井水不犯河水。
+        </div>
+    </div>
+</section>
+
+<!-- ================= S8 三个专员的一天 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第贰幕</span><span class="issue">传统 HR 的日常</span></div>
+        <h2 class="title reveal">专员们的一天</h2>
+        <div class="mod-grid" style="margin-top:26px;">
+            <div class="panel reveal d1" style="text-align:left;">
+                <h3 style="color:var(--verm);">招聘专员</h3>
+                <ul><li>发布招聘信息</li><li>筛选简历</li><li>安排面试</li><li>发 Offer</li></ul>
+            </div>
+            <div class="panel reveal d2" style="text-align:left;">
+                <h3 style="color:var(--blue);">培训专员</h3>
+                <ul><li>统计培训需求</li><li>联系培训机构</li><li>安排培训</li><li>收集满意度</li></ul>
+            </div>
+            <div class="panel reveal d3" style="text-align:left;">
+                <h3 style="color:var(--green);">薪酬专员</h3>
+                <ul><li>核算工资</li><li>计算奖金</li><li>管理员工福利</li></ul>
+            </div>
+        </div>
+        <div class="panel clickable reveal d4" data-reveal="" style="margin-top:36px;">
+            <span class="cover-label">＋ 课堂提问 ②：用一句话总结，传统 HR 内部按什么分工？e</span>
+            <div class="answer">
+                <span class="ans-tag">标准答案e</span>
+                <p class="key-line" style="font-size:29px;">按照「人力资源职能模块」进行专业化分工：<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;——招聘归招聘，培训归培训，薪酬归薪酬。</div></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S9 冲突！雷总拍门 ================= -->
+<section class="slide dark">
+    <div class="speedlines" style="right:-160px;top:-160px;width:900px;height:900px;"></div>
+    <div class="speedlines" style="left:-160px;bottom:-160px;width:700px;height:700px;transform:rotate(180deg);"></div>
+    <div class="wrap center">
+        <span class="act reveal">第叁幕 · 冲突爆发</span>
+        <div class="reveal-pop d1" style="display:flex;justify-content:center;">
+            <div class="face" data-avatar="lei" style="width:290px;height:290px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M30 52q-4-26 30-26t30 26l-6-2q-2-16-24-16t-24 16z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#b3532f" stroke="#23201a" stroke-width="3.5"></path><path d="M46 84h28l-14 12z" fill="#fff" stroke="#23201a" stroke-width="2.5"></path><path d="M48 50h10M62 50h10" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"></path><path d="M52 66q8 6 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 40l14 4M80 40l-14 4" stroke="#23201a" stroke-width="3" stroke-linecap="round"></path></svg></div>
+        </div>
+        <div class="bubble reveal-pop d2" style="margin-top: 36px; font-size: 56px;">
+            <span class="who">雷总 · 销售总监（拍门而入）</span>
+            “HR 经理！下个月进华南市场——<br>我急需 20 名销售，马上给我招！”
+        </div>
+        <p class="lead reveal d3" style="margin-top:34px;">现在，你就是人力资源部负责人。这个问题，交给你。</p>
+    </div>
+</section>
+
+<!-- ================= S10 投票 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 互动</span><span class="issue">课堂提问 ③ · 举手投票</span></div>
+        <h2 class="title reveal" style="text-align:center;">作为 HR，你招不招？</h2>
+        <div class="vote-row reveal d1" style="margin-top:44px;">
+            <div class="vote-btn opt" data-vote="a">
+                <div class="v-tag" style="color:var(--verm);">A</div>
+                <div class="v-text">马上招</div>
+                <p style="font-size:22px;color:var(--muted);margin-top:10px;">业务部门提需求，HR 的职责就是招聘</p>
+            </div>
+            <div class="vote-btn opt picked" data-vote="b">
+                <div class="v-tag" style="color:var(--blue);">B</div>
+                <div class="v-text">不能马e上招</div>
+                <p style="font-size:22px;color:var(--muted);margin-top:10px;">先等等，事情可能没这么简单</p>
+            </div>
+        </div>
+        <div class="feedback panel show" id="voteFeedback" style="margin-top:40px;">
+            <p style="font-size:26px;">选 B 很谨慎！但「不招」也得给出专业理由——往下翻，看看另一种尴尬。</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S11 分支A 后果链 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 剧情分支 A</span><span class="issue">如果「马上招」</span></div>
+        <span class="act reveal">选择 A 的世界线</span>
+        <h2 class="title reveal d1">一个月后：20 人全部到岗。然后呢？</h2>
+        <div class="chain reveal d2" style="margin-top: 42px; font-size: 30px;">
+            <div class="link" style="font-size: 30px;"><b>第 1 个月</b><br>雷总要 20 人<br>HR 立刻启动招聘</div>
+            <div class="link" style="font-size: 30px;"><b>第 2 个月</b><br>20 人全部入职<br>奔赴华南市场</div>
+            <div class="link" style="font-size: 30px;"><b>第 3 个月</b><br>市场根本没打开<br>业绩没有增长</div>
+            <div class="link" style="background: rgba(179, 83, 47, 0.12); font-size: 30px;"><b>结局</b><br>企业平白多了<br><span style="color:var(--verm);font-weight:900;">20 个人的成本</span></div>
+        </div>
+        <p class="lead reveal d3" style="margin-top:44px;">更严重的还在后面：如果证明根本不需要这 20 个人——<br>等待企业的，可能是 <mark>裁员</mark>。e</p>
+    </div>
+</section>
+
+<!-- ================= S12 代价清单 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 剧情分支 A</span><span class="issue">代价清单</span></div>
+        <h2 class="title reveal">多招 20 个人，增加的只是工资吗？</h2>
+        <div class="mod-grid" style="margin-top:34px;">
+            <div class="panel reveal d1"><div class="mod-name">💰 工资</div></div>
+            <div class="panel reveal d2"><div class="mod-name">🛡️ 社保成本</div></div>
+            <div class="panel reveal d3"><div class="mod-name">🎁 福利成本</div></div>
+            <div class="panel reveal d4"><div class="mod-name">📚 培训成本</div></div>
+            <div class="panel reveal d5"><div class="mod-name">🗂️ 管理成本</div></div>
+            <div class="panel reveal d6"><div class="mod-name">🖥️ 办公成本</div></div>
+        </div>
+        <div class="bubble tail-b reveal-pop d7" style="margin-top:44px;">
+            <span class="who">复盘</span>
+            HR 什么都没分析，业务说「要 20 个」就招 20 个——问题大了。
+        </div>
+    </div>
+</section>
+
+<!-- ================= S13 分支B ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 剧情分支 B</span><span class="issue">如果「不招」</span></div>
+        <span class="act reveal">选择 B 的世界线</span>
+        <div style="display:flex;gap:44px;margin-top:36px;align-items:flex-start;">
+            <div class="reveal d1" style="flex:1;">
+                <div class="cast-row"><div class="face" data-avatar="hao"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-18 28-18t28 18l-5 2q-3-13-23-13t-23 13z" fill="#8a8a8a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#7a7a7a" stroke="#23201a" stroke-width="3.5"></path><path d="M46 50h8M66 50h8" stroke="#23201a" stroke-width="3.2" stroke-linecap="round"></path><path d="M52 68q8 -4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 38l12 5M80 38l-12 5" stroke="#23201a" stroke-width="2.8" stroke-linecap="round"></path><path d="M88 30q6 -6 10 0" stroke="#23201a" stroke-width="2.6" fill="none"></path></svg></div>
+                <div class="bubble tail-l"><span class="who">郝忙 · 传统 HR 经理</span>“不给你招。我们不想招。”</div></div>
+            </div>
+            <div class="reveal d2" style="flex:1;">
+                <div class="cast-row"><div class="face" data-avatar="lei"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M30 52q-4-26 30-26t30 26l-6-2q-2-16-24-16t-24 16z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#b3532f" stroke="#23201a" stroke-width="3.5"></path><path d="M46 84h28l-14 12z" fill="#fff" stroke="#23201a" stroke-width="2.5"></path><path d="M48 50h10M62 50h10" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"></path><path d="M52 66q8 6 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 40l14 4M80 40l-14 4" stroke="#23201a" stroke-width="3" stroke-linecap="round"></path></svg></div>
+                <div class="bubble tail-l"><span class="who">雷总</span>“为什么？！给我个理由！”</div></div>
+            </div>
+        </div>
+        <div class="panel reveal d3" style="margin-top:50px;">
+            <p style="font-size:29px;">「不想招」——这个答案<mark>专业吗？</mark>显然不。<br>
+            真正的问题是：<span class="key-line" style="font-size:33px;color:var(--verm);">HR 到底应该根据什么，决定招、还是不招？</span></p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S14 知识点3 五个判断 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 知识点</span><span class="issue">知识点 ③ · 本课核心问题</span></div>
+        <span class="act reveal">知识点 ③</span>
+        <h2 class="title reveal d1">不能只看「业务提了需求」，HR 要判断五件事</h2>
+        <div class="chain vertical reveal d2" style="margin-top:30px;max-width:1150px;">
+            <div class="link">① 业务<b>到底需不需要人</b>？</div>
+            <div class="link">② 需要<b>多少人</b>？（为什么偏偏是 20 个？）</div>
+            <div class="link">③ <b>什么时候</b>需要？</div>
+            <div class="link">④ 需要<b>什么样的人</b>？</div>
+            <div class="link">⑤ 招进来之后<b>能不能创造价值</b>？</div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S15 为什么传统HR答不上 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第肆幕</span><span class="issue">传统 HR 真正的问题</span></div>
+        <span class="act reveal">第肆幕 · 困境</span>
+        <h2 class="title reveal d1">为什么传统 HR 很难回答「该不该招」？</h2>
+        <div class="vs" style="margin-top:34px;">
+            <div class="panel reveal d2">
+                <span class="vs-badge">招聘专员擅长</span>
+                <ul style="margin-top: 12px; font-size: 19px;" class=""><li class="" style="font-size: 24px;">怎么发招聘信息</li><li>怎么筛简历</li><li>怎么安排面试</li><li>怎么发 Offer</li></ul>
+                <p style="margin-top:12px;color:var(--muted);">——「怎么招」，门儿清。</p>
+            </div>
+            <div class="panel reveal d3">
+                <span class="vs-badge" style="background:#c9b08a;">但未必知道</span>
+                <ul style="margin-top:12px;"><li>为什么是 20 个人？</li><li>15 个够不够？30 个更好？</li><li>现在是市场问题，还是人的问题？</li></ul>
+                <p style="margin-top:12px;color:var(--verm);font-weight:700;">——「为什么招」，答不上。</p>
+            </div>
+        </div>
+        <p class="lead reveal d4" style="margin-top:26px;text-align:center;">传统 HR 擅长做「人力资源工作」，但不一定理解「业务」。</p>
+    </div>
+</section>
+
+<!-- ================= S16 业绩下降≠缺人 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第肆幕</span><span class="issue">关键辨析</span></div>
+        <div class="bubble reveal" style="align-self:flex-start;"><span class="who">雷总</span>“销售额下降了！赶紧给我招 10 个销售！”</div>
+        <h2 class="title reveal d1" style="margin-top:30px;">业绩不好，一定是缺人吗？</h2>
+        <div class="tag-row reveal d2" style="margin-top:28px;gap:18px;">
+            <span class="tag reveal d2">① 确实人不够 → 该招</span>
+            <span class="tag reveal d3">② 产品没有竞争力</span>
+            <span class="tag reveal d4">③ 激励机制有问题</span>
+            <span class="tag reveal d5">④ 培训能力不足</span>
+            <span class="tag reveal d6">⑤ 销售区域划分不合理</span>
+        </div>
+        <div class="panel reveal d7" style="margin-top:42px;">
+            <p style="font-size:29px;">五种可能，只有一种是「缺人」。<br>不诊断就招人，等于<mark>没把脉就开药</mark>。e</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S17 金句① ================= -->
+<section class="slide dark">
+    <div class="wrap center">
+        <span class="quote-mark reveal">“</span>
+        <h2 class="quote-big reveal d1">业务部门说「我要人」，<br>不等于企业真正<span style="color:#e8b07e;">需要招人</span>。</h2>
+        <p class="lead reveal d2" style="margin-top:36px;"><br></p>
+    </div>
+</section>
+
+<!-- ================= S18 知识点4 两个世界 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 知识点</span><span class="issue">知识点 ④ · 传统 HR 的核心局限</span></div>
+        <span class="act reveal">知识点 ④</span>
+        <h2 class="title reveal d1">HR 与业务之间，隔着一条河</h2>
+        <div class="vs" style="margin-top:32px;">
+            <div class="panel reveal d2">
+                <span class="vs-badge">HR 主要关注</span>
+                <ul style="margin-top:12px;"><li>招聘流程有没有完成</li><li>培训有没有组织</li><li>工资有没有发放</li><li>绩效有没有考核</li></ul>
+            </div>
+            <div class="panel reveal d3">
+                <span class="vs-badge" style="background:var(--verm);color:#fff;">业务真正关心</span>
+                <ul style="margin-top:12px;"><li>销售有没有增长？</li><li>项目有没有完成？</li><li>企业有没有赚钱？</li></ul>
+            </div>
+        </div>
+        <div class="panel clickable reveal d4" data-reveal="" style="margin-top:28px;">
+            <span class="cover-label">提问 ⑤：传统 HR 最容易关注什么？A 业务增长 / B 自己的工作完成</span>
+            <div class="answer"><span class="ans-tag">答案e</span>
+            <p style="font-size:26px;">B——不是 HR 不努力，e而是<mark>组织结构决定工作逻辑</mark>：招聘专员的 KPI 是招聘完成率，培训专员的是培训完成率，薪酬专员的是工资准确率。</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S19 KPI困局 ================= -->
+<section class="slide dark">
+    <div class="wrap center">
+        <span class="act reveal">所以，困局出现了</span>
+        <div style="display:flex;align-items:center;gap:52px;margin-top:34px;">
+            <div class="panel reveal d1" style="max-width:640px;">
+                <p style="font-size:29px;">传统 HR 容易变成<br><span class="key-line" style="font-size:40px;color:#e8b07e;">「完成 HR 工作的人」</span></p>
+            </div>
+            <div class="reveal d2" style="font-size:62px;font-weight:900;color:var(--verm);">≠</div>
+            <div class="panel reveal d3" style="max-width:640px;">
+                <p style="font-size:29px;">企业真正需要的<br><span class="key-line" style="font-size:40px;color:#9fd08f;">「帮业务达成目标的人」</span></p>
+            </div>
+        </div>
+        <p class="lead reveal d4" style="margin-top:42px;">这，就是人力资源管理变革的背景。</p>
+    </div>
+</section>
+
+<!-- ================= S20 企业需要什么样的HR ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第伍幕</span><span class="issue">从传统 HR 到战略 HR</span></div>
+        <span class="act reveal">第伍幕 · 变革</span>
+        <h2 class="title reveal d1">企业需要什么样的 HR？</h2>
+        <div class="reveal d2" style="margin-top:24px;">
+            <div class="bubble" style="align-self:flex-start;"><span class="who">雷总</span>“我的销售额下降了！”</div>
+        </div>
+        <div style="display:flex;gap:36px;margin-top:32px;">
+            <div class="panel reveal d3" style="flex:1;">
+                <h3 style="color:var(--muted);">✗ 旧反应</h3>
+                <p>「好的，我马上给你招人。」</p>
+            </div>
+            <div class="panel reveal d4" style="flex:2;border-color:var(--verm);">
+                <h3 style="color:var(--verm);">✓ 新反应：先问「为什么」</h3>
+                <div class="tag-row" style="margin-top:10px;">
+                    <span class="tag">人的问题？</span><span class="tag">能力问题？</span><span class="tag">激励问题？</span>
+                    <span class="tag">组织问题？</span><span class="tag">产品问题？</span>
+                </div>
+            </div>
+        </div>
+        <div class="panel reveal d5" style="margin-top:32px;">
+            <p style="font-size:28px;">HR 的角色开始发生重要变化：<br><span class="key-line" style="font-size:32px;">传统 HR：<mark>管理人</mark>　→　战略 HR：<mark>通过管理人，支持业务发展</mark></span></p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S21 三支柱登场 ================= -->
+<section class="slide dark">
+    <div class="speedlines" style="right:-160px;top:-160px;width:860px;height:860px;"></div>
+    <div class="wrap center">
+        <span class="act reveal">第陆幕 · 主角登场</span>
+        <h2 class="quote-big reveal d1" style="font-size:64px;">HR 三支柱 = 三种核心角色</h2>
+        <div style="display:flex;gap:36px;margin-top:44px;">
+            <div class="panel reveal-pop d2" style="flex:1;text-align:center;">
+                <div class="face" data-avatar="bo" style="width:145px;height:145px;margin:0 auto 12px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div>
+                <div style="font-family:var(--font-display);font-weight:900;font-size:44px;color:#8fb8e8;">HRBP</div>
+                <div style="font-size:20px;color:#b7ab90;margin-top:6px;">Human Resource Business Partner</div>
+                <div style="font-size:27px;margin-top:8px;">人力资源业务伙伴</div>
+            </div>
+            <div class="panel reveal-pop d3" style="flex:1;text-align:center;">
+                <div class="face" data-avatar="gu" style="width:145px;height:145px;margin:0 auto 12px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"></path><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"></path><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+                <div style="font-family:var(--font-display);font-weight:900;font-size:44px;color:#9fd08f;">COE</div>
+                <div style="font-size:20px;color:#b7ab90;margin-top:6px;">Center of Excellence</div>
+                <div style="font-size:27px;margin-top:8px;">专家中心</div>
+            </div>
+            <div class="panel reveal-pop d4" style="flex:1;text-align:center;">
+                <div class="face" data-avatar="shi" style="width:145px;height:145px;margin:0 auto 12px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"></path><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"></path><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+                <div style="font-family:var(--font-display);font-weight:900;font-size:44px;color:#f0b078;">SSC</div>
+                <div style="font-size:20px;color:#b7ab90;margin-top:6px;">Shared Service Center</div>
+                <div style="font-size:27px;margin-top:8px;">共享服务中心</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S22 一句话记住 ================= -->
+<section class="slide">
+    <div class="wrap center">
+        <span class="act reveal">人力资源三支柱</span>
+        <h2 class="title reveal d1" style="font-size:56px;">最简单的理解方式</h2>
+        <div style="display:flex;gap:36px;margin-top:40px;width:100%;">
+            <div class="panel reveal d2" style="flex:1;text-align:center;">
+                <div class="face" data-avatar="bo" style="width:106px;height:106px;margin:0 auto 10px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div>
+                <p style="font-family:var(--font-display);font-weight:900;font-size:34px;color:var(--blue);">靠近业务</p>
+                <p style="font-size:22px;color:var(--muted);margin-top:8px;">HRBP · 柏桥</p>
+            </div>
+            <div class="panel reveal d3" style="flex:1;text-align:center;">
+                <div class="face" data-avatar="gu" style="width:106px;height:106px;margin:0 auto 10px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"></path><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"></path><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+                <p style="font-family:var(--font-display);font-weight:900;font-size:34px;color:var(--green);">提供专业方案</p>
+                <p style="font-size:22px;color:var(--muted);margin-top:8px;">COE · 顾深远</p>
+            </div>
+            <div class="panel reveal d4" style="flex:1;text-align:center;">
+                <div class="face" data-avatar="shi" style="width:106px;height:106px;margin:0 auto 10px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"></path><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"></path><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+                <p style="font-family:var(--font-display);font-weight:900;font-size:34px;color:var(--orange);">提供标准化服务</p>
+                <p style="font-size:22px;color:var(--muted);margin-top:8px;">SSC · 时小捷</p>
+            </div>
+        </div>
+        <p class="lead reveal d5" style="margin-top:38px;">这只是第一层理解。接下来，一个一个拆开。</p>
+    </div>
+</section>
+
+<!-- ================= S23 HRBP 柏桥登场 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第柒幕</span><span class="issue">第一根支柱</span></div>
+        <div class="hero-char">
+            <div class="face reveal-left" data-avatar="bo"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="flex:1;">
+                <div class="h-en reveal d1">HRBP · HUMAN RESOURCE BUSINESS PARTNER</div>
+                <div class="h-name reveal d1" style="color:var(--blue);">柏桥</div>
+                <p class="lead reveal d2" style="margin-top:6px;">站在业务旁边的人力资源管理者</p>
+                <div class="panel reveal d3" style="margin-top:22px;">
+                    <p style="font-size:27px;">关键词是「<span class="key-line" style="color:var(--verm);">业务伙伴</span>」——<br>不是业务部门的服务员，而是业务部门的<mark>合作伙伴</mark>。</p>
+                </div>
+                <div class="tag-row reveal d4" style="margin-top:20px;">
+                    <span class="tag">深入业务</span><span class="tag">理解业务</span><span class="tag">支持业务</span><span class="tag">用 HR 解决业务问题</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S24 柏桥五连问 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第柒幕</span><span class="issue">HRBP 的反应</span></div>
+        <div class="cast-row reveal">
+            <div class="face" data-avatar="lei"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M30 52q-4-26 30-26t30 26l-6-2q-2-16-24-16t-24 16z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#b3532f" stroke="#23201a" stroke-width="3.5"></path><path d="M46 84h28l-14 12z" fill="#fff" stroke="#23201a" stroke-width="2.5"></path><path d="M48 50h10M62 50h10" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"></path><path d="M52 66q8 6 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 40l14 4M80 40l-14 4" stroke="#23201a" stroke-width="3" stroke-linecap="round"></path></svg></div>
+            <div class="bubble tail-l"><span class="who">雷总</span>“我要 20 个人！”</div>
+        </div>
+        <div class="reveal d1" style="margin-top:30px;">
+            <div class="cast-row">
+                <div class="face" data-avatar="bo"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div>
+                <div class="bubble tail-l" style="flex:1;"><span class="who">柏桥</span>“雷总别急，先回答我几个问题——”</div>
+            </div>
+        </div>
+        <div class="mod-grid reveal d2" style="margin-top:28px;grid-template-columns:repeat(5,1fr);">
+            <div class="panel reveal d2" style="padding:22px 12px;"><p style="font-size:23px;font-weight:700;">为什么<br>需要 20 人？</p></div>
+            <div class="panel reveal d3" style="padding:22px 12px;"><p style="font-size:23px;font-weight:700;">现在销售<br>有多少人？</p></div>
+            <div class="panel reveal d4" style="padding:22px 12px;"><p style="font-size:23px;font-weight:700;">每人产出<br>是多少？</p></div>
+            <div class="panel reveal d5" style="padding:22px 12px;"><p style="font-size:23px;font-weight:700;">新市场预计<br>多少销售额？</p></div>
+            <div class="panel reveal d6" style="padding:22px 12px;"><p style="font-size:23px;font-weight:700;">问题真的<br>是缺人吗？</p></div>
+        </div>
+        <p class="lead reveal d7" style="margin-top:32px;">HRBP 首先做的是 <mark>理解业务</mark>，然后 <mark>诊断问题</mark>——而不是马上招人。</p>
+    </div>
+</section>
+
+<!-- ================= S25 互动③ 你是柏桥 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 互动</span><span class="issue">情景演练</span></div>
+        <span class="act reveal">情景：你是 HRBP 柏桥</span>
+        <div class="panel reveal d1" style="margin-top:10px;">
+            <p style="font-size:27px;">A 公司销售部现有 <b>50 名</b>销售，月销售额 <b>5000 万元</b>。<br>雷总认为：「销售额增长不够快，再给我招 <b>20 个</b>人。」</p>
+            <p style="font-size:29px;margin-top:12px;color:var(--verm);font-weight:900;">你的第一步，做什么？（先讨论 1—2 分钟）</p>
+        </div>
+        <div class="panel clickable reveal d2 revealed" data-reveal="" style="margin-top:30px;">
+            <span class="cover-label">＋ 讨论完毕，点击揭示正确动作</span>
+            <div class="answer">
+                <span class="ans-tag">正确动作</span>
+                <p class="key-line" style="font-size:30px;">既不是「招聘」，也不是「拒绝」——而是 <mark>业务诊断</mark>。</p>
+                <div class="tag-row" style="margin-top:12px;">
+                    <span class="tag">人员数量？</span><span class="tag">人员能力？</span><span class="tag">激励机制？</span>
+                    <span class="tag">组织结构？</span><span class="tag">市场环境？</span><span class="tag">产品竞争力？</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S26 知识点7 HRBP工作逻辑 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 知识点</span><span class="issue">知识点 ⑦</span></div>
+        <span class="act reveal">知识点 ⑦</span>
+        <h2 class="title reveal d1">HRBP 的核心工作逻辑</h2>
+        <div class="chain reveal d2" style="margin-top:56px;">
+            <div class="link" style="text-align:center;"><b>业务问题</b><br>销售额增长慢</div>
+            <div class="link" style="text-align:center;"><b>人才与组织诊断</b><br>到底是什么原因</div>
+            <div class="link" style="text-align:center;"><b>提出 HR 解决方案</b><br>对症下药</div>
+            <div class="link" style="text-align:center;"><b>支持业务目标实现</b><br>最终目的</div>
+        </div>
+        <div class="bubble tail-b reveal-pop d4" style="margin-top:62px;">
+            <span class="who">柏桥</span>
+            但注意——我也不是万能的。
+        </div>
+    </div>
+</section>
+
+<!-- ================= S27 转折 ================= -->
+<section class="slide dark">
+    <div class="wrap center">
+        <span class="act reveal" style="font-size: 29px;">剧情转折</span>
+        <h2 class="title reveal d1" style="font-size:50px;">柏桥诊断发现：销售团队的激励机制有问题。</h2>
+        <p class="lead reveal d2" style="margin-top:28px;max-width:1350px;">可是——柏桥了解业务，但他一定是薪酬专家吗？绩效专家吗？组织设计专家吗？<br>全公司的薪酬体系，由他一个人拍脑袋设计吗？</p>
+        <div class="reveal-pop d3" style="margin-top:42px;">
+            <span class="stamp" style="color:#9fd08f;border-color:#9fd08f;font-size:38px;">专业方案，需要专业的人</span>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S28 COE 顾深远登场 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第玖幕</span><span class="issue">第二根支柱</span></div>
+        <div class="hero-char">
+            <div class="face reveal-left" data-avatar="gu"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"></path><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"></path><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="flex:1;">
+                <div class="h-en reveal d1">COE · CENTER OF EXCELLENCE</div>
+                <div class="h-name reveal d1" style="color:var(--green);">顾深远</div>
+                <p class="lead reveal d2" style="margin-top:6px;">HR 领域的「专家智库」</p>
+                <div class="panel reveal d3" style="margin-top:20px;">
+                    <p style="font-size: 32px;" class="">当柏桥提出「需要重新设计销售人员激励机制」——<br>提供<mark>专业人力资源方案</mark>的人，就是 COE。</p>
+                </div>
+                <div class="tag-row reveal d4" style="margin-top:18px;">
+                    <span class="tag">薪酬专家</span><span class="tag">绩效专家</span><span class="tag">招聘专家</span>
+                    <span class="tag">培训专家</span><span class="tag">组织发展</span><span class="tag">人才发展</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S29 传统招聘 vs COE招聘 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第玖幕</span><span class="issue">课堂辨析</span></div>
+        <h2 class="title reveal">传统招聘专员 和 COE 招聘专家，一样吗？</h2>
+        <div class="vs" style="margin-top:30px;">
+            <div class="panel reveal d1">
+                <span class="vs-badge" style="background:#d8cfbd;">传统招聘专员 · 执行层</span>
+                <ul style="margin-top:12px;"><li>发布招聘广告</li><li>筛选简历</li><li>安排面试</li><li>发 Offer</li></ul>
+            </div>
+            <div class="panel reveal d2">
+                <span class="vs-badge" style="background:var(--green);color:#fff;">COE 招聘专家 · 体系层</span>
+                <ul style="margin-top:12px;"><li>企业整体招聘体系怎么设计？</li><li>未来需要什么样的人才？</li><li>人才标准与面试评价体系怎么建？</li><li>校园招聘战略怎么定？</li></ul>
+            </div>
+        </div>
+        <p class="lead reveal d3" style="margin-top:28px;text-align:center;">区别不在于「都懂招聘」，而在于 <mark>工作的层次不同</mark>。</p>
+    </div>
+</section>
+
+<!-- ================= S30 知识点9 COE职责 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 知识点</span><span class="issue">知识点 ⑨</span></div>
+        <span class="act reveal">知识点 ⑨</span>
+        <h2 class="title reveal d1">COE 的核心职责：四个字，「专业赋能」</h2>
+        <div class="mod-grid" style="margin-top:26px;grid-template-columns:repeat(2,1fr);">
+            <div class="panel reveal d2" style="text-align:left;"><h3>① 制定政策</h3><p>薪酬政策、绩效政策、招聘政策...</p></div>
+            <div class="panel reveal d3" style="text-align:left;"><h3>② 设计体系</h3><p class="">绩效管理体系、人才培养体系、薪酬体系...</p></div>
+            <div class="panel reveal d4" style="text-align:left;"><h3>③ 提供专业方案</h3><p class="">如销售人员流失严重 → HRBP 提出问题，COE 分析并设计方案</p></div>
+            <div class="panel reveal d5" style="text-align:left;"><h3>④ 持续优化</h3><p class="">根据企业发展不断调整人力资源制度</p></div>
+        </div>
+        <p class="lead reveal d6" style="margin-top:28px;">注意：HRBP 也要具备专业能力，COE 也要理解业务——<mark>职责重点不同，不是绝对隔离</mark>。</p>
+    </div>
+</section>
+
+<!-- ================= S31 互动④ HRBP还是COE ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 互动</span><span class="issue">快问快答 · 点选项判对错</span></div>
+        <h2 class="title reveal">这件事，HRBP 还是 COE？</h2>
+        <div style="display:flex;gap:34px;margin-top:26px;flex:1;min-height:0;">
+            <div class="panel reveal d1" style="flex:1;">
+                <h3>题 1：分析销售部为什么需要增加 20 名销售</h3>
+                <div class="quiz-opts">
+                    <div class="panel opt correct locked" data-correct="true">A · HRBP</div>
+                    <div class="panel opt locked" data-correct="false">B · COE</div>
+                </div>
+                <div class="feedback show"><p style="font-size:23px;margin-top:8px;">✔ 业务需求分析，先有请 HRBP。</p></div>
+            </div>
+            <div class="panel reveal d2" style="flex:1;">
+                <h3>题 2：重新设计销售人员的绩效考核指标</h3>
+                <div class="quiz-opts">
+                    <div class="panel opt locked" data-correct="false">A · HRBP 独立完成</div>
+                    <div class="panel opt correct locked" data-correct="true">B · COE 主导，HRBP 参与</div>
+                </div>
+                <div class="feedback show"><p style="font-size:23px;margin-top:8px;">✔ COE 主导专业设计，HRBP 提供业务信息——「谁主导、谁参与、谁支持」。</p></div>
+            </div>
+        </div>
+        <p class="lead reveal d3" style="margin-top:24px;text-align:center;">现实中很多工作不是「完全属于某一个角色」，而是看谁主导、谁参与、谁支持。</p>
+    </div>
+</section>
+
+<!-- ================= S32 SSC 时小捷登场 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第拾壹幕</span><span class="issue">第三根支柱</span></div>
+        <div class="hero-char">
+            <div class="face reveal-left" data-avatar="shi"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"></path><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"></path><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+            <div style="flex:1;">
+                <div class="h-en reveal d1">SSC · SHARED SERVICE CENTER</div>
+                <div class="h-name reveal d1" style="color:var(--orange);">时小捷</div>
+                <p class="lead reveal d2" style="margin-top:6px;">人力资源共享服务中心——让 HR 服务高效运行</p>
+                <div class="panel reveal d3" style="margin-top:20px;">
+                    <p style="font-size:26px;">方案定了，谁真正动手？发布招聘信息、安排面试、发 Offer、办入职——<mark>集中处理标准化 HR 事务</mark>。</p>
+                </div>
+                <div class="tag-row reveal d4" style="margin-top:18px;">
+                    <span class="tag">入职离职</span><span class="tag">劳动合同</span><span class="tag">社保办理</span>
+                    <span class="tag">工资数据</span><span class="tag">HR 系统</span><span class="tag">员工咨询</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S33 四地分公司 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第拾壹幕</span><span class="issue">SSC 为什么存在</span></div>
+        <h2 class="title reveal">一个关键场景：四地分公司的重复</h2>
+        <div class="mod-grid reveal d1" style="margin-top:24px;grid-template-columns:repeat(4,1fr);">
+            <div class="panel"><div class="mod-name" style="font-size:27px;">北京分公司</div><p style="font-size:20px;color:var(--muted);margin-top:8px;">薪酬+社保+合同<br>各配一套人</p></div>
+            <div class="panel"><div class="mod-name" style="font-size:27px;">上海分公司</div><p style="font-size:20px;color:var(--muted);margin-top:8px;">薪酬+社保+合同<br>各配一套人</p></div>
+            <div class="panel"><div class="mod-name" style="font-size:27px;">广州分公司</div><p style="font-size:20px;color:var(--muted);margin-top:8px;">薪酬+社保+合同<br>各配一套人</p></div>
+            <div class="panel"><div class="mod-name" style="font-size:27px;">深圳分公司</div><p style="font-size:20px;color:var(--muted);margin-top:8px;">薪酬+社保+合同<br>各配一套人</p></div>
+        </div>
+        <div style="text-align:center;font-size:36px;color:var(--verm);font-weight:900;margin:20px 0;" class="reveal d2">↓ 重复建设！集中起来 ↓</div>
+        <div class="chain reveal d3">
+            <div class="link" style="text-align:center;"><b>① 降低成本</b></div>
+            <div class="link" style="text-align:center;"><b>② 提高效率</b></div>
+            <div class="link" style="text-align:center;"><b>③ 统一标准</b></div>
+            <div class="link" style="text-align:center;"><b>e④ 提升服务质量</b></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S34 知识点11 SSC定位 ================= -->
+<section class="slide">
+    <div class="wrap center">
+        <span class="act reveal">知识点 ⑪</span>
+        <h2 class="title reveal d1">SSC 不是「打杂部门」</h2>
+        <p class="lead reveal d2" style="margin-top:18px;max-width:1350px;">它真正承担的，是标准化、集约化、流程化、数字化的人力资源服务。</p>
+        <div class="tag-row reveal d3" style="margin-top:38px;justify-content:center;gap:20px;">
+            <span class="tag" style="font-size:30px;">标准化</span>
+            <span class="tag" style="font-size:30px;">集约化</span>
+            <span class="tag" style="font-size:30px;">流程化</span>
+            <span class="tag" style="font-size:30px;">数字化</span>
+            <span class="tag" style="font-size:30px;">高效率</span>
+        </div>
+        <div class="bubble reveal-pop d4" style="margin-top:50px;">
+            <span class="who">时小捷</span>
+            “社保什么时候缴？入职怎么办？收入证明怎么开？——标准化服务，随叫随到。”
+        </div>
+    </div>
+</section>
+
+<!-- ================= S35 三支柱对比总表 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第拾贰幕</span><span class="issue">第一次完整对比</span></div>
+        <h2 class="title reveal">三支柱，分别解决什么问题？</h2>
+        <div class="mod-grid" style="margin-top:30px;">
+            <div class="panel reveal d1" style="border-top: 10px solid var(--blue); text-align: left; font-size: 27px;">
+                <div class="face" data-avatar="bo" style="width:84px;height:84px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div>
+                <h3 style="color:var(--blue);margin-top:10px;">HRBP · 业务伙伴</h3>
+                <p style="margin-top:8px;">核心问题：<br><span class="key-line" style="font-size:27px;">「业务到底需要什么？」</span></p>
+            </div>
+            <div class="panel reveal d2" style="border-top:10px solid var(--green);text-align:left;">
+                <div class="face" data-avatar="gu" style="width:84px;height:84px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"></path><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"></path><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+                <h3 style="color:var(--green);margin-top:10px;">COE · 专业专家</h3>
+                <p style="margin-top:8px;">核心问题：<br><span class="key-line" style="font-size:27px;">「专业方案应该怎么设计？」</span></p>
+            </div>
+            <div class="panel reveal d3" style="border-top:10px solid var(--orange);text-align:left;">
+                <div class="face" data-avatar="shi" style="width:84px;height:84px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"></path><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"></path><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+                <h3 style="color:var(--orange);margin-top:10px;">SSC · 服务中心</h3>
+                <p style="margin-top:8px;">核心问题：<br><span class="key-line" style="font-size:27px;">「标准化事务如何高效完成？」</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S36 不是上下级 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第拾贰幕</span><span class="issue">重要提醒</span></div>
+        <h2 class="title reveal" style="text-align:center;">三支柱<span style="color:var(--verm);">不是上下级</span>！</h2>
+        <div class="tri-wrap reveal d1">
+            <div class="tri">
+                <div class="tri-line" style="left:450px;top:200px;width:330px;transform:rotate(118deg);"></div>
+                <div class="tri-line" style="left:450px;top:200px;width:330px;transform:rotate(62deg);"></div>
+                <div class="tri-line" style="left:265px;top:530px;width:370px;"></div>
+                <div class="tri-node reveal-pop d2" style="left:325px;top:0;">
+                    <div class="t-name" style="color:var(--blue);">HRBP</div><div class="t-en">业务伙伴</div>
+                </div>
+                <div class="tri-node reveal-pop d3" style="left:60px;top:470px;">
+                    <div class="t-name" style="color:var(--green);">COE</div><div class="t-en">专家中心</div>
+                </div>
+                <div class="tri-node reveal-pop d4" style="left:590px;top:470px;">
+                    <div class="t-name" style="color:var(--orange);">SSC</div><div class="t-en">共享服务</div>
+                </div>
+                <div class="tri-center reveal d5">共同服务<br>企业战略与业务</div>
+            </div>
+        </div>
+        <p class="lead reveal d6" style="text-align:center;">HRBP 不是 COE 的领导，COE 也不是 SSC 的领导——三种专业角色，平等协同。</p>
+    </div>
+</section>
+
+<!-- ================= S37 大案例：协同全链 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 第拾叁幕</span><span class="issue">本课最重要案例 · 华南 20 人</span></div>
+        <span class="act reveal">完整协同 · 四步还原</span>
+        <div class="chain vertical reveal d1" style="margin-top:14px;">
+            <div class="link" style="border-left:12px solid var(--verm);font-size:23px;"><b>起点e · 雷总提需求</b>　「未来三个月进华南市场，我要 20 名销售，马上招！」</div>
+            <div class="link" style="border-left: 12px solid var(--blue); font-size: 29px;"><b>第 1 步 · 柏桥（HRBP）介入</b>　不直接招人，先理解业务：市场规模多大？为什么 20 人？能创造多少销售额？→ <mark>不只是接受需求，而是判断需求</mark>。结论：确实需要增员，但现有激励机制也有问题。</div>
+            <div class="link" style="border-left: 12px solid var(--green); font-size: 29px;"><b>第 2 步 · 顾深远（COE）介入</b>　招聘专家定岗位/面试标准；薪酬专家设计基本工资+绩效+销售奖金；绩效专家设计 KPI（销售额、客户开发数、转化率、回款率）。</div>
+            <div class="link" style="border-left: 12px solid var(--orange); font-size: 29px;"><b>第 3 步 · 时小捷（SSC）介入</b>　方案落地执行：招聘流程支持、面试安排、Offer 与入职、劳动合同、员工信息维护。</div>
+        </div>
+        <p class="lead reveal d3" style="margin-top:22px;">正确逻辑：HRBP 提供业务信息 → COE 提供专业方案 → <mark>双方共同完善</mark> → SSC 高效执行。</p>
+    </div>
+</section>
+
+<!-- ================= S38 知识点12 组织设计理念 ================= -->
+<section class="slide dark">
+    <div class="wrap center">
+        <span class="act reveal">知识点 ⑫</span>
+        <h2 class="title reveal d1" style="font-size:48px;">HR 三支柱不是一张「固定的岗位清单」</h2>
+        <p class="lead reveal d2" style="margin-top:26px;max-width:1400px;">现实中，不同公司的招聘工作划分可能不同：执行归 SSC、体系归招聘 COE、需求分析归 HRBP。<br>所以核心不是「某一项工作绝对属于谁」——</p>
+        <div class="panel reveal d3" style="margin-top:38px;max-width:1350px;">
+            <p style="font-size:31px;">而是按照 <span style="color:#8fb8e8;font-weight:900;">业务</span>、<span style="color:#9fd08f;font-weight:900;">专业</span>、<span style="color:#f0b078;font-weight:900;">服务</span> 三个维度，<br><span class="key-line" style="font-size:35px;">重新配置 HR 工作的「组织设计理念」。</span></p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S39 小游戏：规则+题1 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 游戏时间</span><span class="issue">《你到底在招谁？》 1/4</span></div>
+        <div style="display:flex;align-items:center;gap:26px;">
+            <span class="stamp reveal">游戏开始</span>
+            <p class="lead reveal d1" style="margin:0;">规则：看<b>岗位职责</b>判断 HRBP / COE / SSC——不能只看岗位名称！</p>
+        </div>
+        <div class="panel reveal d2" style="margin-top: 28px; font-size: 21px;">
+            <h3>第 1 题 · 岗位职责</h3>
+            <p class="" style="font-size: 30px;">深入销售部门了解业务需求；参与销售团队组织诊断；分析人才结构是否支持业务发展；与销售负责人共同制定人才解决方案。</p>
+            <div class="quiz-opts" style="grid-template-columns:repeat(3,1fr);">
+                <div class="panel opt correct locked" data-correct="true" style="text-align:center;">A · HRBP</div>
+                <div class="panel opt locked" data-correct="false" style="text-align:center;">B · COE</div>
+                <div class="panel opt locked" data-correct="false" style="text-align:center;">C · SSC</div>
+            </div>
+            <div class="feedback show"><p style="font-size:24px;margin-top:8px;">✔ 深入业务、组织诊断、共制方案——典型的 HRBP。</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S40 游戏题2、3 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 游戏时间</span><span class="issue">《你到底在招谁？》 2/4 · 3/4</span></div>
+        <div style="display:flex;gap:34px;margin-top:6px;flex:1;min-height:0;">
+            <div class="panel reveal d1" style="flex: 1 1 0%; font-size: 21px;">
+                <h3>第 2 题 · 岗位职责</h3>
+                <p style="font-size: 30px;" class="">建立企业统一的绩效管理体系；设计绩效考核指标；优化绩效评价方法；制定绩效管理政策。</p>
+                <div class="quiz-opts" style="grid-template-columns:repeat(3,1fr);">
+                    <div class="panel opt locked" data-correct="false" style="text-align:center;font-size:21px;">HRBP</div>
+                    <div class="panel opt correct locked" data-correct="true" style="text-align:center;font-size:21px;">COE</div>
+                    <div class="panel opt locked" data-correct="false" style="text-align:center;font-size:21px;">SSC</div>
+                </div>
+                <div class="feedback show"><p style="font-size:22px;margin-top:6px;">✔ 建体系、定政策——COE 的专业活儿。</p></div>
+            </div>
+            <div class="panel reveal d2" style="flex:1;">
+                <h3>第 3 题 · 岗位职责</h3>
+                <p style="font-size: 30px;" class="">负责员工入职手续办理；维护员工人事信息；解答员工社保问题；办理劳动合同。</p>
+                <div class="quiz-opts" style="grid-template-columns:repeat(3,1fr);">
+                    <div class="panel opt locked" data-correct="false" style="text-align:center;font-size:21px;">HRBP</div>
+                    <div class="panel opt locked" data-correct="false" style="text-align:center;font-size:21px;">COE</div>
+                    <div class="panel opt correct locked" data-correct="true" style="text-align:center;font-size:21px;">eSSC</div>
+                </div>
+                <div class="feedback show"><p style="font-size:22px;margin-top:6px;">✔ 标准化事务处理——SSC 的主场。</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S41 游戏陷阱题 ================= -->
+<section class="slide">
+    <div class="wrap center">
+        <span class="stamp reveal">⚠ 习题 · 4/4</span>
+        <div class="panel reveal d1" style="margin-top:32px;max-width:1300px;">
+            <h3>岗位名称：「招聘专员」</h3>
+            <p>职责：发布招聘信息、筛选简历、安排面试、进行入职流程。</p>
+            <p style="margin-top:10px;font-weight:900;color:var(--verm);font-size:28px;" class="">这个岗位一定属于 SSC 吗？</p>
+        </div>
+        <div class="panel clickable reveal d2" data-reveal="" style="margin-top:34px;max-width:1300px;">
+            <span class="cover-label">＋ 点击揭示e答案</span>
+            <div class="answer">
+                <span class="ans-tag">答案</span>
+                <p style="font-size:28px;"><b>不一定！</b>可能属于 SSC，也可能属于招聘 COEE——取决于企业的组织设计。<br><span class="key-line" style="color:var(--verm);">不要看岗位名称，一定要看岗位职责。</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S42 审判庭 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 升级版游戏</span><span class="issue">HR 三支柱审判庭</span></div>
+        <span class="act reveal">分组讨论</span>
+        <div class="panel reveal d1" style="margin-top: 8px; font-size: 36px;">
+            <p style="font-size:26px;">案情：A 公司最近半年，销售离职率从 <b>15%</b> 飙升到 <b>35%</b>。雷总：「赶紧给我招 30 个人！」<br>全班分三组：HRBP 组 / COE 组 / SSC 组，分别回答——</p>
+        </div>
+        <div class="mod-grid" style="margin-top:22px;">
+            <div class="panel clickable reveal d2 revealed" data-reveal="" style="border-top: 8px solid var(--blue); text-align: left; font-size: 23px;">
+                <h3 style="color:var(--blue);">HRBP 组</h3><p style="font-size:22px;">你第一步做什么？</p>
+                <span class="cover-label" style="font-size:18px;">＋ 点击看参考</span>
+                <div class="answer"><p style="font-size: 30px;" class="">不能马上招！先分析离职原因：薪酬？管理？职业发展？压力？组织氛围？</p></div>
+            </div>
+            <div class="panel clickable reveal d3 revealed" data-reveal="" style="border-top:8px solid var(--green);text-align:left;">
+                <h3 style="color:var(--green);">COE 组</h3><p style="font-size:22px;">若主因是薪酬缺乏竞争力，你们做什么？</p>
+                <span class="cover-label" style="font-size:18px;">＋ 点击看参考</span>
+                <div class="answer"><p style="font-size: 30px;" class="">专业分析+薪酬优化方案：市场薪酬调查、结构优化、奖金机制、长期激励。</p></div>
+            </div>
+            <div class="panel clickable reveal d4 revealed" data-reveal="" style="border-top: 8px solid var(--orange); text-align: left; font-size: 24px;">
+                <h3 style="color:var(--orange);">SSC 组</h3><p style="font-size:22px;">方案实施之后，你们负责什么？</p>
+                <span class="cover-label" style="font-size:18px;">＋ 点击看参考e</span>
+                <div class="answer"><p style="font-size: 30px;" class="">薪酬数据维护、员工信息维护、新员工入职服务、标准化流程与系统支持。</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S43 综合案例 100人 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 综合挑战</span><span class="issue">华南市场 100 人招聘计划</span></div>
+        <div class="panel reveal">
+            <p style="font-size:26px;">A 公司宣布：三个月后进入华南市场，预计需要 <b>100 名</b>销售。雷总找到 CEO：「马上招 100 个人！」CEO：「HR 部门负责。」</p>
+        </div>
+        <div class="mod-grid" style="margin-top:22px;">
+            <div class="panel clickable reveal d1 revealed" data-reveal="" style="text-align:left;">
+                <h3 style="color:var(--blue);">问 1 · HRBP 第一步？</h3>
+                <span class="cover-label" style="font-size:18px;">＋ 点击看参考方向</span>
+                <div class="answer"><p style="font-size: 30px;" class="">业务需求分析：为什么 100 人？业务规模？人均产出？现有人员能否调配？招聘节奏与市场进入是否匹配？</p></div>
+            </div>
+            <div class="panel clickable reveal d2 revealed" data-reveal="" style="text-align:left;">
+                <h3 style="color:var(--green);">问 2 · 确定要招，COE 做什么？</h3>
+                <span class="cover-label" style="font-size:18px;">＋ 点击看参考方向</span>
+                <div class="answer"><p style="font-size: 30px;" class="">人才标准、招聘策略、薪酬激励、绩效体系、培养方案、关键岗位选拔标准。e</p></div>
+            </div>
+            <div class="panel clickable reveal d3 revealed" data-reveal="" style="text-align:left;">
+                <h3 style="color:var(--orange);">问 3 · SSC 做e什么？</h3>
+                <span class="cover-label" style="font-size:18px;">＋ 点击看参考方向e</span>
+                <div class="answer"><p style="font-size: 30px;" class="">招聘流程支持、入职服务、人事信息维护、社保、劳动合同、HR 系统支持。</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S44 课堂测试·单选 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 测试</span><span class="issue">单选题 · 点击揭示答案</span></div>
+        <div style="display:flex;gap:24px;flex:1;min-height:0;margin-top:2px;">
+            <div class="panel clickable reveal d1 revealed" data-reveal="" style="flex: 1 1 0%; font-size: 17px;">
+                <h3>1<span class="diff">中等</span></h3>
+                <p class="quiz-q" style="font-size: 30px;">业务提出要增加 30 名销售，HRBP 最合理的第一步？</p>
+                <p style="font-size: 30px; color: var(--muted); margin-top: 8px;" class="">A 立即发布招聘　<div>B 拒绝需求<br>C 分析业务与人员需求的关系　</div><div>D 联系猎头</div></p>
+                <span class="cover-label" style="font-size:17px;">＋ 答案</span>
+                <div class="answer"><p style="font-size:21px;"><b style="color:var(--verm);">C</b> ——HRBP 的核心是理解业务、诊断问题，而非直接执行。</p></div>
+            </div>
+            <div class="panel clickable reveal d2 revealed" data-reveal="" style="flex: 1 1 0%; font-size: 33px; left: 0px; top: 0px;" data-translate-x="0" data-translate-y="0">
+                <h3>2<span class="diff">较难</span></h3>
+                <p class="quiz-q" style="font-size: 30px;">某团队负责设计绩效体系、统一人才评价标准、优化薪酬结构，它最可能是？</p>
+                <p style="font-size: 30px; color: var(--muted); margin-top: 8px;" class="">A HRBP　<div>B COE　</div><div>C SSC　</div><div>D 业务部门</div></p>
+                <span class="cover-label" style="font-size:17px;">＋ 答案</span>
+                <div class="answer"><p style="font-size:21px;"><b style="color:var(--verm);">B</b> ——体系与标准设计，是 COE 的专业领域。</p></div>
+            </div>
+            <div class="panel clickable reveal d3 revealed" data-reveal="" style="flex: 1 1 0%; font-size: 22px;">
+                <h3>3<span class="diff">高难</span></h3>
+                <p class="quiz-q" style="font-size: 30px;">把入离职、社保、合同、人事证明集中到总部统一处理，最符合？</p>
+                <p style="font-size: 30px; color: var(--muted); margin-top: 8px;" class="">A HRBP　<div>B COE　</div><div>C SSC　</div><div>D 传统六大模块</div></p>
+                <span class="cover-label" style="font-size:17px;">＋ 答案</span>
+                <div class="answer"><p style="font-size:21px;"><b style="color:var(--verm);">C</b> ——标准化、集约化事务处理，正是 SSC。</p></div>
+            </div>
+            <div class="panel clickable reveal d4 revealed" data-reveal="" style="flex: 1 1 0%; font-size: 23px;">
+                <h3>4<span class="diff">高难</span></h3>
+                <p class="quiz-q" style="font-size: 30px;">业绩下滑要求招 50 人，HRBP 发现人数充足但离职率高、能力不足。最合理做法？</p>
+                <p style="font-size: 30px; color: var(--muted); margin-top: 8px;" class="">A 直接招　<div>B 拒绝一切需求<br>C 联合业务诊断，向 COE 提能力与激励优化需求　</div><div>D SSC 直接组织培训</div></p>
+                <span class="cover-label" style="font-size:17px;">＋ 答案</span>
+                <div class="answer"><p style="font-size:21px;"><b style="color:var(--verm);">C</b> ——诊断在前，协同在后。</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S45 判断题 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 高难度测试</span><span class="issue">判断题 · 点击揭示</span></div>
+        <h2 class="title reveal" style="font-size:44px;">对的画 ✓，错的画 ✗</h2>
+        <div class="mod-grid" style="margin-top:20px;grid-template-columns:repeat(2,1fr);gap:18px;">
+            <div class="panel clickable reveal d1 revealed" data-reveal="" style="text-align: left; padding: 18px 24px; font-size: 18px;"><p style="font-size:23px;">①「COE 负责所有人力资源工作的执行。」</p><span class="cover-label" style="font-size:17px;">＋ 答案e</span><div class="answer"><p style="font-size:22px;"><b style="color:var(--verm);">✗ 错</b>——执行与服务主要由 SSC 承担。</p></div></div>
+            <div class="panel clickable reveal d2 revealed" data-reveal="" style="text-align:left;padding:18px 24px;"><p style="font-size:23px;">②「SSC 的核心价值是实现 HR 工作的标准化和规模化。」</p><span class="cover-label" style="font-size:17px;">＋ 答案</span><div class="answer"><p style="font-size:22px;"><b style="color:var(--green);">✓ 对</b></p></div></div>
+            <div class="panel clickable reveal d3 revealed" data-reveal="" style="text-align:left;padding:18px 24px;"><p style="font-size:23px;">③「三支柱模式下，招聘工作一定全部由 SSC 负责。」</p><span class="cover-label" style="font-size:17px;">＋ 答案</span><div class="answer"><p style="font-size:22px;"><b style="color:var(--verm);">✗ 错</b>——组织设计因企业而异，不能机械理解。</p></div></div>
+            <div class="panel clickable reveal d4 revealed" data-reveal="" style="text-align:left;padding:18px 24px;"><p style="font-size:23px;">④「HRBP 的价值之一是把业务问题转化为人才与组织问题。」</p><span class="cover-label" style="font-size:17px;">＋ 答案</span><div class="answer"><p style="font-size:22px;"><b style="color:var(--green);">✓ 对</b></p></div></div>
+            <div class="panel clickable reveal d5 revealed" data-reveal="" style="grid-column:1/3;text-align:left;padding:18px 24px;"><p style="font-size:23px;">⑤「三支柱的本质是把传统六大模块平均拆分给三个部门。」</p><span class="cover-label" style="font-size:17px;">＋ 答案</span><div class="answer"><p style="font-size:22px;"><b style="color:var(--verm);">✗ 错</b>——本质是按业务、专业、服务三个维度重新配置 HR 工作。</p></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S46 终极案例 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 终极挑战</span><span class="issue">案例分析题</span></div>
+        <span class="act reveal">案例分析</span>
+        <div class="panel reveal d1" style="margin-top:6px;">
+            <p style="font-size:25px;" class="">销售业绩下降，雷总认定「人不够」，要求招 <b>50 名</b>销售。柏桥调查后发现：人其实不少，真正的问题是——<b>① 激励不足　② 新员工培训体系不完善　③ 绩效考核指标不合理</b>。</p>
+            <p style="font-size:26px;margin-top:8px;color:var(--verm);font-weight:900;">请说明：HRBP、COE、SSC 分别做什么？三者如何协同？</p>
+        </div>
+        <div class="mod-grid reveal d2" style="margin-top:20px;grid-template-columns:repeat(4,1fr);">
+            <div class="panel clickable revealed" data-reveal="" style="border-top: 8px solid var(--blue); text-align: left; font-size: 20px;"><h3 style="color:var(--blue);font-size:25px;" class="">HRBP</h3><span class="cover-label" style="font-size:16px;">＋ 参考</span><div class="answer"><p style="font-size:19px;">业务诊断：明确不是人数问题；与业务共同确认关键原因；提出人才与组织方案需求。</p></div></div>
+            <div class="panel clickable revealed" data-reveal="" style="border-top:8px solid var(--green);text-align:left;"><h3 style="color:var(--green);font-size:25px;">COE</h3><span class="cover-label" style="font-size:16px;">＋ 参考</span><div class="answer"><p style="font-size:19px;">优化薪酬激励；设计销售培训体系；优化绩效考核；建立符合业务的人才标准。</p></div></div>
+            <div class="panel clickable revealed" data-reveal="" style="border-top:8px solid var(--orange);text-align:left;"><h3 style="color:var(--orange);font-size:25px;">SSC</h3><span class="cover-label" style="font-size:16px;">＋ 参考</span><div class="answer"><p style="font-size:19px;">信息维护；培训流程与系统支持；绩效系统支持；薪酬数据支持；后续入离职服务。</p></div></div>
+            <div class="panel clickable revealed" data-reveal="" style="border-top:8px solid var(--verm);text-align:left;"><h3 style="color:var(--verm);font-size:25px;">协同</h3><span class="cover-label" style="font-size:16px;">e＋ 参考</span><div class="answer"><p style="font-size:19px;">HRBP 界定问题 → COE 设计方案 → SSC 服务支持。共同目标：帮业务解决经营问题。</p></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S47 总结：过去vs现在 ================= -->
+<section class="slide">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 · 最终幕</span><span class="issue">课程总结</span></div>
+        <span class="act reveal">同一声「我要人」，两种回应</span>
+        <div class="vs" style="margin-top:22px;">
+            <div class="panel reveal d1">
+                <span class="vs-badge" style="background:#d8cfbd;">过去 · 传统 HR</span>
+                <div style="margin-top:14px;">
+                    <div class="cast-row"><div class="face" data-avatar="lei" style="width:84px;height:84px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M30 52q-4-26 30-26t30 26l-6-2q-2-16-24-16t-24 16z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#b3532f" stroke="#23201a" stroke-width="3.5"></path><path d="M46 84h28l-14 12z" fill="#fff" stroke="#23201a" stroke-width="2.5"></path><path d="M48 50h10M62 50h10" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"></path><path d="M52 66q8 6 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 40l14 4M80 40l-14 4" stroke="#23201a" stroke-width="3" stroke-linecap="round"></path></svg></div><div class="bubble tail-l" style="font-size:30px;padding:12px 24px;"><span class="who" style="font-size:15px;">雷总</span>“我要人。”</div></div>
+                    <div class="cast-row" style="margin-top:16px;"><div class="face" data-avatar="hao" style="width:84px;height:84px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-18 28-18t28 18l-5 2q-3-13-23-13t-23 13z" fill="#8a8a8a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#7a7a7a" stroke="#23201a" stroke-width="3.5"></path><path d="M46 50h8M66 50h8" stroke="#23201a" stroke-width="3.2" stroke-linecap="round"></path><path d="M52 68q8 -4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 38l12 5M80 38l-12 5" stroke="#23201a" stroke-width="2.8" stroke-linecap="round"></path><path d="M88 30q6 -6 10 0" stroke="#23201a" stroke-width="2.6" fill="none"></path></svg></div><div class="bubble tail-l" style="font-size:30px;padding:12px 24px;"><span class="who" style="font-size:15px;">郝忙</span>“好，我去招。”</div></div>
+                </div>
+            </div>
+            <div class="panel reveal d2" style="border-color:var(--verm);">
+                <span class="vs-badge" style="background:var(--verm);color:#fff;">现在 · HR 三支柱</span>
+                <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px;">
+                    <div class="cast-row"><div class="face" data-avatar="bo" style="width:72px;height:72px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div><div class="bubble tail-l" style="font-size:26px;padding:10px 20px;"><span class="who" style="font-size:14px;">柏桥</span>“等等，先看看你到底需要什么。”</div></div>
+                    <div class="cast-row"><div class="face" data-avatar="gu" style="width:72px;height:72px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"></path><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"></path><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div><div class="bubble tail-l" style="font-size:26px;padding:10px 20px;"><span class="who" style="font-size:14px;">顾深远</span>“确定要解决，我们出专业方案。”</div></div>
+                    <div class="cast-row"><div class="face" data-avatar="shi" style="width:72px;height:72px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"></path><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"></path><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div><div class="bubble tail-l" style="font-size:26px;padding:10px 20px;"><span class="who" style="font-size:14px;">时小捷</span>“方案定了，标准化服务高效执行。”</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S48 金句收尾 ================= -->
+<section class="slide dark">
+    <div class="wrap center">
+        <span class="act reveal">人力资源三支柱</span>
+        <h2 class="quote-big reveal d1" style="font-size:56px;">「HRBP 懂业务，COE 出专业方案，<br>SSC 提供高效服务。」</h2>
+        <div style="width:120px;height:4px;background:#e8b07e;margin:38px 0;" class="reveal d2"></div>
+        <h2 class="quote-big reveal d3" style="font-size:42px;color:#c9bd9f;">「三支柱的目的不仅是分工，而是通过专业化分工与协同，<br>让 HR 真正为<span style="color:#e8b07e;">企业战略和业务发展</span>创造价值。」</h2>
+    </div>
+</section>
+
+<!-- ================= S49 板书页 ================= -->
+<section class="slide active visible">
+    <div class="wrap">
+        <div class="masthead"><span class="brand">人事风云 e</span><span class="issue">本课逻辑全图</span></div>
+        <div style="display:flex;gap:40px;flex:1;min-height:0;">
+            <div class="panel reveal d1" style="flex:1;">
+                <h3 style="color:var(--muted);">传统 HR</h3>
+                <p style="font-size:27px;margin-top:10px;">业务部门提出需求<br>↓<br>HR 执行</p>
+                <p style="margin-top:14px;color:var(--muted);font-size:23px;">关注：「HR 工作有没有完成？」</p>
+            </div>
+            <div class="panel reveal d2" style="flex:2;border-color:var(--verm);">
+                <h3 style="color:var(--verm);">HR 三支柱</h3>
+                <div class="chain vertical" style="margin-top:12px;">
+                    <div class="link" style="padding:12px 18px;font-size:22px;border-left:10px solid var(--blue);"><b>HRBP</b>　理解业务、诊断问题</div>
+                    <div class="link" style="padding:12px 18px;font-size:22px;border-left:10px solid var(--green);"><b>COE</b>　设计专业方案</div>
+                    <div class="link" style="padding:12px 18px;font-size:22px;border-left:10px solid var(--orange);"><b>SSC</b>　标准化服务支持</div>
+                    <div class="link" style="padding:12px 18px;font-size:22px;background:rgba(219,124,44,.15);"><b>最终</b>　人力资源价值 → 组织能力提升 → 业务目标实现</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= S50 谢幕 ================= -->
+<section class="slide dark">
+    <div class="speedlines" style="right:-140px;top:-140px;width:700px;height:700px;"></div>
+    <div class="wrap center">
+        <div style="display:flex;gap:36px;justify-content:center;" class="reveal">
+            <div class="face" data-avatar="lei" style="width:126px;height:126px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M30 52q-4-26 30-26t30 26l-6-2q-2-16-24-16t-24 16z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#b3532f" stroke="#23201a" stroke-width="3.5"></path><path d="M46 84h28l-14 12z" fill="#fff" stroke="#23201a" stroke-width="2.5"></path><path d="M48 50h10M62 50h10" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"></path><path d="M52 66q8 6 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M40 40l14 4M80 40l-14 4" stroke="#23201a" stroke-width="3" stroke-linecap="round"></path></svg></div>
+            <div class="face" data-avatar="bo" style="width:126px;height:126px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"></path></svg></div>
+            <div class="face" data-avatar="gu" style="width:126px;height:126px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"></path><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"></path><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"></circle><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"></path><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+            <div class="face" data-avatar="shi" style="width:126px;height:126px;"><svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"></circle><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"></path><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"></path><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"></path><circle cx="49" cy="52" r="3" fill="#23201a"></circle><circle cx="71" cy="52" r="3" fill="#23201a"></circle><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"></path></svg></div>
+        </div>
+        <h2 class="quote-big reveal d2" style="margin-top:40px;">人事风云 · 第壹话 完</h2>
+        <p class="lead reveal d3" style="margin-top:24px;">下节课：三支柱在真实企业中的落地与挑战</p>
+        <div class="bubble reveal-pop d4" style="margin-top:40px;">
+            <span class="who">全员合</span>
+            “HR 的价值，是帮业务打胜仗！”
+        </div>
+    </div>
+</section>
+
+</main>
+</div>
+
+<!-- 页码指示器（舞台之外） -->
+<div class="pager" id="pager">49 / 50</div>
+
+<!-- 编辑模式控件 -->
+<div class="edit-hotzone"></div>
+<button class="edit-toggle show" id="editToggle" title="编辑模式 (E)">✎</button>
+<button class="edit-save" id="editSave" title="保存 (Cmd/Ctrl+S)">💾</button>
+<div class="inline-toolbar" id="inlineToolbar">
+    <span>字号</span><input type="number" id="fontSizeInput" value="28" min="10" max="200">
+    <span>文字</span><input type="color" id="textColorInput" value="#23201a">
+    <span>背景</span><input type="color" id="bgColorInput" value="#fffdf6">
+    <button id="moveBtn" title="拖动模式 (M)" class="">✥ 移动</button>
+</div>
+
+<script>
+/* ===========================================
+   角色 SVG 库：注入所有 [data-avatar] 元素
+   =========================================== */
+const AVATARS = {
+lei: '<svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"/><path d="M30 52q-4-26 30-26t30 26l-6-2q-2-16-24-16t-24 16z" fill="#23201a"/><path d="M18 112q6-26 42-26t42 26z" fill="#b3532f" stroke="#23201a" stroke-width="3.5"/><path d="M46 84h28l-14 12z" fill="#fff" stroke="#23201a" stroke-width="2.5"/><path d="M48 50h10M62 50h10" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"/><path d="M52 66q8 6 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M40 40l14 4M80 40l-14 4" stroke="#23201a" stroke-width="3" stroke-linecap="round"/></svg>',
+bo: '<svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"/><path d="M32 46q0-24 28-24t28 24q-8-10-28-10t-28 10z" fill="#23201a"/><path d="M18 112q6-26 42-26t42 26z" fill="#2f6db3" stroke="#23201a" stroke-width="3.5"/><circle cx="49" cy="52" r="3" fill="#23201a"/><circle cx="71" cy="52" r="3" fill="#23201a"/><path d="M52 66q8 5 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M44 42q5-4 10-1M66 41q5-3 10 1" stroke="#23201a" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>',
+gu: '<svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"/><path d="M32 44q4-20 28-20t28 20l-4 2q-4-14-24-14t-24 14z" fill="#5a5a5a"/><path d="M18 112q6-26 42-26t42 26z" fill="#4a6741" stroke="#23201a" stroke-width="3.5"/><circle cx="48" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"/><circle cx="72" cy="53" r="8.5" fill="none" stroke="#23201a" stroke-width="3"/><path d="M56.5 53h7" stroke="#23201a" stroke-width="3"/><path d="M52 70q8 4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+shi: '<svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"/><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#23201a"/><path d="M30 50q-6 2-4 10M90 50q6 2 4 10" stroke="#23201a" stroke-width="3" fill="none"/><path d="M18 112q6-26 42-26t42 26z" fill="#db7c2c" stroke="#23201a" stroke-width="3.5"/><circle cx="49" cy="52" r="3" fill="#23201a"/><circle cx="71" cy="52" r="3" fill="#23201a"/><path d="M50 64q10 8 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+hao: '<svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"/><path d="M32 44q4-18 28-18t28 18l-5 2q-3-13-23-13t-23 13z" fill="#8a8a8a"/><path d="M18 112q6-26 42-26t42 26z" fill="#7a7a7a" stroke="#23201a" stroke-width="3.5"/><path d="M46 50h8M66 50h8" stroke="#23201a" stroke-width="3.2" stroke-linecap="round"/><path d="M52 68q8 -4 16 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M40 38l12 5M80 38l-12 5" stroke="#23201a" stroke-width="2.8" stroke-linecap="round"/><path d="M88 30q6 -6 10 0" stroke="#23201a" stroke-width="2.6" fill="none"/></svg>',
+teacher: '<svg viewBox="0 0 120 120"><circle cx="60" cy="52" r="30" fill="#f2c99b" stroke="#23201a" stroke-width="3.5"/><path d="M32 46q2-22 28-22t28 22q-6-12-28-12t-28 12z" fill="#3d3d3d"/><path d="M18 112q6-26 42-26t42 26z" fill="#c8a24a" stroke="#23201a" stroke-width="3.5"/><path d="M42 52q5 -5 10 0M68 52q5 -5 10 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M50 66q10 7 20 0" stroke="#23201a" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="86" y="20" width="22" height="16" rx="3" fill="#fff" stroke="#23201a" stroke-width="2.5"/><path d="M90 26h14M90 30h9" stroke="#23201a" stroke-width="2"/></svg>'
+};
+document.querySelectorAll('[data-avatar]').forEach(el => {
+    const key = el.getAttribute('data-avatar');
+    if (AVATARS[key]) el.innerHTML = AVATARS[key];
+});
+
+/* ===========================================
+   放映控制器：缩放舞台 + 键盘/滚轮/触摸翻页 + 页码
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.pager = document.getElementById('pager');
+        this.wheelLock = false;
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupWheelNav();
+        this.setupTouchNav();
+        this.showSlide(0);
+    }
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + factor + ')';
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+            if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); this.next(); }
+            else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.prev(); }
+            else if (e.key === 'Home') this.showSlide(0);
+            else if (e.key === 'End') this.showSlide(this.slides.length - 1);
+        });
+    }
+    setupWheelNav() {
+        window.addEventListener('wheel', (e) => {
+            if (this.wheelLock || Math.abs(e.deltaY) < 24) return;
+            this.wheelLock = true;
+            e.deltaY > 0 ? this.next() : this.prev();
+            setTimeout(() => { this.wheelLock = false; }, 650);
+        }, { passive: true });
+    }
+    setupTouchNav() {
+        let sx = 0, sy = 0;
+        window.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+        window.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - sx;
+            const dy = e.changedTouches[0].clientY - sy;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? this.next() : this.prev(); }
+        }, { passive: true });
+    }
+    next() { this.showSlide(this.currentSlide + 1); }
+    prev() { this.showSlide(this.currentSlide - 1); }
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        this.pager.textContent = (this.currentSlide + 1) + ' / ' + this.slides.length;
+    }
+}
+const deck = new SlidePresentation();
+
+/* ===========================================
+   课堂互动：点击揭示 / 选项对错 / 投票
+   （编辑模式下自动禁用，避免与 contenteditable 冲突）
+   =========================================== */
+// 1. 点击揭示答案
+document.querySelectorAll('[data-reveal]').forEach(card => {
+    card.addEventListener('click', (e) => {
+        if (editor.isActive) return;
+        if (e.target.closest('.opt')) return;
+        card.classList.toggle('revealed');
+    });
+});
+// 2. 选项判对错（同一题组内）
+document.querySelectorAll('.opt[data-correct]').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+        if (editor.isActive) return;
+        e.stopPropagation();
+        const group = opt.closest('.quiz-opts');
+        const isRight = opt.getAttribute('data-correct') === 'true';
+        if (isRight) {
+            opt.classList.add('correct');
+            if (group) group.querySelectorAll('.opt').forEach(o => o.classList.add('locked'));
+            const fb = opt.closest('.panel') && opt.closest('.panel').parentElement.querySelector('.feedback');
+            const fbLocal = opt.closest('.panel') ? opt.closest('.panel').querySelector('.feedback') : null;
+            const fbNear = (opt.parentElement.parentElement && opt.parentElement.parentElement.querySelector('.feedback')) || fbLocal;
+            if (fbNear) fbNear.classList.add('show');
+        } else {
+            opt.classList.add('wrong');
+            setTimeout(() => opt.classList.remove('wrong'), 600);
+        }
+    });
+});
+// 3. 投票按钮
+const voteTexts = {
+    a: '选 A 的同志很果断！但请往下翻——看看「马上招」的世界线会发生什么。',
+    b: '选 B 很谨慎！但「不招」也得给出专业理由——往下翻，看看另一种尴尬。'
+};
+document.querySelectorAll('.vote-btn[data-vote]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (editor.isActive) return;
+        document.querySelectorAll('.vote-btn').forEach(b => b.classList.remove('picked'));
+        btn.classList.add('picked');
+        const fb = document.getElementById('voteFeedback');
+        fb.querySelector('p').textContent = voteTexts[btn.getAttribute('data-vote')];
+        fb.classList.add('show');
+    });
+});
+
+/* ===========================================
+   就地编辑（E 键 / 左上角热区）+ 浮动工具栏 + 保存
+   =========================================== */
+class InlineEditing {
+    constructor() {
+        this.isActive = false;
+        this.selectedEl = null;
+        this.moveMode = false;
+        this.toggle = document.getElementById('editToggle');
+        this.saveBtn = document.getElementById('editSave');
+        this.toolbar = document.getElementById('inlineToolbar');
+        this.fontSizeInput = document.getElementById('fontSizeInput');
+        this.textColorInput = document.getElementById('textColorInput');
+        this.bgColorInput = document.getElementById('bgColorInput');
+        this.moveBtn = document.getElementById('moveBtn');
+        this.drag = { active: false, startX: 0, startY: 0, origX: 0, origY: 0 };
+        this.bind();
+    }
+    bind() {
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        this.saveBtn.addEventListener('click', () => this.save());
+        // 热区悬停显示，400ms 宽限
+        const hotzone = document.querySelector('.edit-hotzone');
+        let hideTimeout = null;
+        hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); this.toggle.classList.add('show'); });
+        hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); });
+        this.toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        this.toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); });
+        hotzone.addEventListener('click', () => this.toggleEditMode());
+        // E 键切换 / M 键移动 / Cmd+S 保存
+        document.addEventListener('keydown', (e) => {
+            const editing = e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true';
+            if ((e.key === 'e' || e.key === 'E') && !editing && !(e.target.tagName === 'INPUT')) this.toggleEditMode();
+            if ((e.key === 'm' || e.key === 'M') && this.isActive && !editing) this.toggleMoveMode();
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); if (this.isActive) this.save(); }
+        });
+        // 选中元素
+        document.addEventListener('click', (e) => {
+            if (!this.isActive) return;
+            if (e.target.closest('.inline-toolbar') || e.target.closest('.edit-toggle') || e.target.closest('.edit-save')) return;
+            const el = e.target.closest('.slide [contenteditable="true"]') || e.target.closest('.slide *');
+            if (el && el.closest('.slide')) this.select(el);
+        });
+        // 工具栏
+        this.fontSizeInput.addEventListener('change', () => this.applyFontSize());
+        this.textColorInput.addEventListener('input', () => this.applyTextColor());
+        this.bgColorInput.addEventListener('input', () => this.applyBgColor());
+        this.moveBtn.addEventListener('click', () => this.toggleMoveMode());
+        // 拖动
+        document.addEventListener('mousedown', (e) => {
+            if (!this.isActive || !this.moveMode || !this.selectedEl) return;
+            if (e.target.closest('.inline-toolbar')) return;
+            this.drag.active = true;
+            this.drag.startX = e.clientX; this.drag.startY = e.clientY;
+            this.drag.origX = parseFloat(this.selectedEl.dataset.translateX || 0);
+            this.drag.origY = parseFloat(this.selectedEl.dataset.translateY || 0);
+            e.preventDefault();
+        });
+        document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+        document.addEventListener('mouseup', () => { this.drag.active = false; });
+    }
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggle.classList.toggle('active', this.isActive);
+        this.toggle.textContent = this.isActive ? '✓' : '✎';
+        this.saveBtn.classList.toggle('show', this.isActive);
+        document.body.classList.toggle('editing', this.isActive);
+        if (!this.isActive) this.deselect();
+        const skipTags = new Set(['SCRIPT','STYLE','SVG','PATH','RECT','CIRCLE','IMG','VIDEO','AUDIO','IFRAME','INPUT','TEXTAREA','BUTTON']);
+        document.querySelectorAll('.slide *').forEach(el => {
+            if (skipTags.has(el.tagName)) return;
+            const hasDirectText = Array.from(el.childNodes).some(
+                n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length > 0
+            );
+            if (hasDirectText) el.setAttribute('contenteditable', this.isActive);
+        });
+    }
+    select(el) {
+        this.deselect();
+        this.selectedEl = el;
+        el.classList.add('inline-selected');
+        this.toolbar.classList.add('show');
+        const fs = parseFloat(window.getComputedStyle(el).fontSize);
+        if (!isNaN(fs)) this.fontSizeInput.value = Math.round(fs);
+    }
+    deselect() {
+        if (this.selectedEl) this.selectedEl.classList.remove('inline-selected');
+        this.selectedEl = null;
+        this.toolbar.classList.remove('show');
+        this.moveMode = false;
+        this.moveBtn.classList.remove('active');
+    }
+    toggleMoveMode() {
+        this.moveMode = !this.moveMode;
+        this.moveBtn.classList.toggle('active', this.moveMode);
+    }
+    applyFontSize() {
+        if (!this.selectedEl) return;
+        const val = parseFloat(this.fontSizeInput.value);
+        if (!isNaN(val) && val > 0) this.selectedEl.style.fontSize = val + 'px';
+    }
+    applyTextColor() {
+        if (!this.selectedEl) return;
+        this.selectedEl.style.color = this.textColorInput.value;
+    }
+    applyBgColor() {
+        if (!this.selectedEl) return;
+        this.selectedEl.style.backgroundColor = this.bgColorInput.value;
+    }
+    onMouseMove(e) {
+        if (!this.drag.active || !this.selectedEl) return;
+        const stage = document.getElementById('deckStage');
+        const scale = stage.getBoundingClientRect().width / 1920;
+        const dx = (e.clientX - this.drag.startX) / scale;
+        const dy = (e.clientY - this.drag.startY) / scale;
+        const x = this.drag.origX + dx;
+        const y = this.drag.origY + dy;
+        this.selectedEl.dataset.translateX = x;
+        this.selectedEl.dataset.translateY = y;
+        if (window.getComputedStyle(this.selectedEl).position === 'static') {
+            this.selectedEl.style.position = 'relative';
+        }
+        this.selectedEl.style.left = x + 'px';
+        this.selectedEl.style.top = y + 'px';
+    }
+    save() {
+        this.deselect();
+        this.isActive = false;
+        this.toggle.classList.remove('active');
+        this.toggle.textContent = '✎';
+        this.saveBtn.classList.remove('show');
+        document.body.classList.remove('editing');
+        document.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+        const html = document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '人力资源三支柱-网页版课件.html';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    }
+}
+const editor = new InlineEditing();
+</script>
+
+
+</body></html>
